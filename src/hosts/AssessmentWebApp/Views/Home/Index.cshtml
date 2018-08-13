@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<style type="text/css">
+    body {
+        background-color: #00479d;
+        background-image: url(../Resources/imgs/grid_bg.png);
+    }
+</style>
+<div class="welcome-page">
+    @Html.ActionLink(
+    "Privacy Statement",
+    "PrivacyStatement",
+    null,
+    null,
+    new
+    {
+        @class = "privacystatement"
+    })
+    <div class="welcome-wrap">
+        <h2>China Cloud Migration & Expansion</h2>
+        <div class="welcome-cloud">
+
+        </div>
+
+        <h3>Hello Welcome!</h3>
+
+        <p>Assessment tool that enables users to assess migration with subscription and / or Azure usage report v2.</p>
+        <br />
+        <p>For assessment with subscription. Please sign-in first, input subscription information for assessment and view reports.</p>
+        <p>For assessment with usage report, Please upload Azure usage report V2 and view reports.</p>
+
+
+    </div>
+
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Request.QueryString["errormessage"]))
+{
+    <div style="background-color:red;color:white;font-weight: bold;">
+        Error: @Request.QueryString["errormessage"]
+    </div>
+}

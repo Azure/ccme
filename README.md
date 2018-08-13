@@ -1,3 +1,10 @@
+# China Cloud Migration & Expansion (preview)
+
+Assessment tool that enables users to assess migration with subscription and / or Azure usage report V2.
+
+# Development
+
+CCME is a staightforward Web application running in Azure environment. It requires an AAD application registration, an Azure SQL database and a Stoage Account. Beside manually deployment, some PowerShell scripts provided to provision all the necessary Azure resources. Please reference [customer deploy document](deploy/CustomDeploy/docs/README.md) for details.
 
 # Contributing
 

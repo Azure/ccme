@@ -1,0 +1,97 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Redis Cache SKU {name} {family}{capacity} is not supported in Azure China",
+  "whitelist": [
+    {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 1
+    },
+    {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 2
+    },
+    {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 3
+    },
+    {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 4
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 0
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 1
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 2
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 3
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 4
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 5
+    },
+    {
+      "name": "Standard",
+      "family": "C",
+      "capacity": 6
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 0
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 1
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 2
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 3
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 4
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 5
+    },
+    {
+      "name": "Basic",
+      "family": "C",
+      "capacity": 6
+    }
+  ]
+}

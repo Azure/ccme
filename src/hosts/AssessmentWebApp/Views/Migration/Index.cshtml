@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Migration Playbook";
+}
+ <link href="~/Content/video-js.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/video.min.js"></script>
+    <script>
+        videojs.options.flash.swf = "video-js.swf";
+    </script>
+
+
+<div class="p-60 playbook">
+    <h2 class="title-one">Migration Playbook</h2>
+    <div class="container-a">
+        <h2 class="title-two">Below are the suggested tools/services for major workload migration. </h2>
+        <div class="video-list">
+            <h3 class="title-three">Virtual Machines:</h3>
+            <div class="video-discription">Azure Site Recovery could be leveraged for Virtual Machines migration. We can follow <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/migrate-tutorial-aws-azure" target="_blank">this doc</a> to migrate Azure VM as AWS VM. Sample.</div>
+            <div class="video-small video-virtual-machines">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+
+            </div>
+        </div>
+        <div class="video-list">
+            <h3 class="title-three">Storage:</h3>
+            <div class="video-discription">AzCopy could be leveraged for Virtual Machines migration. Sample.</div>
+            <div class="video-small video-storage">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+            </div>
+        </div>
+        <div class="video-list">
+            <h3 class="title-three">Networking:</h3>
+            <div class="video-discription">MigAZ could be leveraged for Virtual Machines migration. Sample.</div>
+            <div class="video-small video-networking">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+            </div>
+        </div>
+        <div class="video-list">
+            <h3 class="title-three">Database:</h3>
+            <div class="video-discription">SQL Server Integration Services could be leveraged for Database migration. Sample.</div>
+            <div class="video-small video-database">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+            </div>
+        </div>
+        <div class="video-list">
+            <h3 class="title-three">Web Application:</h3>
+            <div class="video-discription">App Service backup feature could be leveraged for Web Application migration. Sample.</div>
+            <div class="video-small video-web-application">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4">
+                </div>
+            </div>
+        </div>
+
+        <div class="playbook-discription ">For China Policies, you could check below playbook for more details:</div>
+        <div class="playbook-discription-sec"> <a class="bold-link" href="http://globalcustomerplaybook.azurewebsites.net/" target="_blank">http://globalcustomerplaybook.azurewebsites.net/</a></div>
+
+    </div>
+
+    <div class="video-full-screen" id="full-screen-video">
+        <div class="video-container">
+            <video id="my-video" class="video-js vjs-default-skin  vjs-big-play-centered " controls preload="none" width="878" height="568"
+                   poster="">
+
+                @*<source src="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4" type='video/mp4' />*@
+                @*<source src="http://ss2.webm" type='video/webm' />
+                    <source src="http://ss3.ogv" type='video/ogg' />*@
+                @*<track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
+                    <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->*@
+            </video>
+        </div>
+
+    </div>
+
+</div>
+@section scripts
+{
+
+    <script type="text/javascript">
+
+        $(".video_link").click(function () {
+            $("#full-screen-video").fadeIn();
+            var myPlayer = videojs('my-video');
+            var videoUrl = $(this).attr("videohref");
+            videojs("my-video", {}, function () {
+                window.myPlayer = this;
+                $("#mymoda .video-con #my-video source").attr("src", videoUrl);
+                $("#mymoda .video-con #my-video source").attr("type", 'video/mp4');
+                myPlayer.src(videoUrl);
+                myPlayer.load(videoUrl);
+                myPlayer.play();
+            });
+        });
+        $("#full-screen-video").on("click", function () {
+            $("#full-screen-video").hide();
+            myPlayer.pause();
+        });
+        $(".video-container").on("click", function (e) {
+            e.stopPropagation();
+            e.cancelBubble = true;
+        });
+
+    </script>
+}

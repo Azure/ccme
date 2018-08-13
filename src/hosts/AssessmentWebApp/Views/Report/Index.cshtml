@@ -1,0 +1,105 @@
+﻿@model  Microsoft.Azure.CCME.Assessment.Hosts.Models.ReportIndexModel
+
+@{
+    ViewBag.Title = "Assessment Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="p-60">
+    @if (Request.IsAuthenticated)
+    {
+        <h2 class="title-one">Assessment Reports</h2>
+
+        <div class="container-a js-pscroll">
+            <div class="container-table100">
+                <div class="wrap-table100">
+                    <div class="table100 ver1 m-b-110">
+                        <div class="table100-head">
+                            <table>
+                                <thead>
+                                    <tr class="row100 head">
+                                        <th class="cell100 column1">Subscription</th>
+                                        <th class="cell100 column2">Created Time</th>
+                                        <th class="cell100 column3">Status</th>
+                                        <th class="cell100 column4">Detail</th>
+                                        <th class="cell100 column5">Remove</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="table100-body js-pscroll">
+                            <table>
+                                <tbody>
+                                    @foreach (var task in Model.AssessmentTasks.OrderByDescending(t => t.CreatedTime))
+                                    {
+                                        <tr class="row100 body">
+                                            <td class="cell100 column1">@task.SubscriptionId</td>
+                                            <td class="cell100 column2">@DateTime.SpecifyKind(task.CreatedTime, DateTimeKind.Utc).ToLocalTime().ToString("yyyyMMdd HH:mm:ss")</td>
+                                            <td class="cell100 column3">@task.Status</td>
+                                            <td class="cell100 column4">
+                                                @if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Completed)
+                                                {
+                                                    @Html.ActionLink("download", "Download", "Report", new { reportId = task.ReportId }, new { @class = "download", target = "_blank" })
+                                                }
+                                                else if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Failed)
+                                                {
+                                                    <span class="text-danger">@task.FailedReason</span>
+                                                }
+                                            </td>
+                                            <td class="cell100 column5">
+                                                @if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Completed
+                                                    || task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Failed)
+                                                {
+                                                    @Html.ActionLink("remove", "Remove", "Report", new {id = task.Id},
+                                                    new { onclick = "return confirm('Do you really want to remove this report?')"})
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: inline-block">
+                @Html.ActionLink("Go back ", "ListSubscription", "Assessment", new { area = "" }, new { @class = "bold-link" })
+            </div>
+
+            <div style="display: inline-block; float: right">
+                @if (Model.AssessmentTasks.All(t => t.IsDone))
+                {
+                    <input type="checkbox" id="cbAutoRefresh" style="display: inline-block" />
+                }
+                else
+                {
+                    <input type="checkbox" id="cbAutoRefresh" checked="checked" style="display: inline-block" />
+                }
+
+                <label for="cbAutoRefresh">Auto refresh</label>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Please Login...</p>
+    }
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var timer = setInterval("autoRefresh()", 5000);
+
+        function autoRefresh() {
+            if (document.getElementById("cbAutoRefresh").checked) {
+                window.location.reload();
+            }
+        }
+
+        window.onbeforeunload = function () {
+            this.clearInterval(timer);
+        }
+    </script>
+}

@@ -1,0 +1,138 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "HDInsight VM size {vmSize} is not supported in Azure China",
+  "whitelist": [
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "LARGE"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "MEDIUM"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "SMALL"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D1"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D1_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D11"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D11_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D12"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D12_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D13"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D13_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D14"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D14_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D2_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D3"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D3_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D4"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D4_V2"
+    },
+    {
+      "kind": "*",
+      "roleName": "*",
+      "vmSize": "STANDARD_D5_V2"
+    }
+  ],
+  "blacklistDefaultHitMessage": "{vmSize} is not available for {roleName} of HDInsight {kind} cluster",
+  "blacklist": [
+    {
+      "values": {
+        "kind": "*",
+        "roleName": "*",
+        "vmSize": "EXTRASMALL"
+      }
+    },
+    {
+      "values": {
+        "kind": "*",
+        "roleName": [ "HeadNode", "WorkerNode", "EdgeNode" ],
+        "vmSize": [ "MEDIUM", "SMALL", "A5", "LARGE", "STANDARD_D1", "STANDARD_D11", "STANDARD_D2" ]
+      }
+    },
+    {
+      "values": {
+        "kind": [ "HBase", "Spark" ],
+        "roleName": "ZookeeperNode",
+        "vmSize": "SMALL"
+      }
+    },
+    {
+      "values": {
+        "kind": [ "Hadoop", "Spark" ],
+        "roleName": "ZookeeperNode",
+        "vmSize": [ "A6", "A7", "A9", "EXTRALARGE", "STANDARD_D12", "STANDARD_D13", "STANDARD_D14", "STANDARD_D3", "STANDARD_D4" ]
+      }
+    },
+  ]
+}

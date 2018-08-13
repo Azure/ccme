@@ -1,0 +1,615 @@
+{
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRule.json",
+  "contentVersion": "1.0.0.0",
+  "rules": [
+    {
+      "name": "listRuleBase",
+      "isAbstract": true,
+      "severity": "Error",
+      "category": "Availability",
+      "source": "1st-party",
+      "evaluator": {
+        "type": "BuiltIn.List"
+      }
+    },
+    {
+      "name": "resourceType.Microsoft",
+      "isAbstract": true,
+      "base": "listRuleBase",
+      "pattern": {
+        "type": "{resourceType}"
+      }
+    },
+    {
+      "name": "resourceType.ChinaNorth.Microsoft",
+      "base": "resourceType.Microsoft",
+      "brief": "Resource type",
+      "description": "Resource type rule for Azure China North",
+      "pattern": {
+        "location": "ChinaNorth"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorthResourceType.json"
+      }
+    },
+    {
+      "name": "resourceType.ChinaEast.Microsoft",
+      "base": "resourceType.Microsoft",
+      "brief": "Resource type",
+      "description": "Resource type rule for Azure China East",
+      "pattern": {
+        "location": "ChinaEast"
+      },
+      "evaluator": {
+        "configKey": "ChinaEastResourceType.json"
+      }
+    },
+    {
+      "name": "resourceType.ChinaNorth2.Microsoft",
+      "base": "resourceType.Microsoft",
+      "brief": "Resource type",
+      "description": "Resource type rule for Azure China North 2",
+      "pattern": {
+        "location": "ChinaNorth2"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorth2ResourceType.json"
+      }
+    },
+    {
+      "name": "resourceType.ChinaEast2.Microsoft",
+      "base": "resourceType.Microsoft",
+      "brief": "Resource type",
+      "description": "Resource type rule for Azure China East 2",
+      "pattern": {
+        "location": "ChinaEast2"
+      },
+      "evaluator": {
+        "configKey": "ChinaEast2ResourceType.json"
+      }
+    },
+    {
+      "name": "image.VirtualMachine.Microsoft",
+      "isAbstract": true,
+      "base": "listRuleBase",
+      "pattern": {
+        "type": "Microsoft.Compute/virtualMachines",
+        "properties": {
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "{publisher}",
+              "offer": "{offer}",
+              "sku": "{sku}",
+              "version": "{version}"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "image.VirtualMachine.ChinaNorth.Microsoft",
+      "base": "image.VirtualMachine.Microsoft",
+      "brief": "VM image",
+      "description": "Virtual machine image rule for Azure China North",
+      "pattern": {
+        "location": "ChinaNorth"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorthVirtualMachineImage.json"
+      }
+    },
+    {
+      "name": "image.VirtualMachine.ChinaEast.Microsoft",
+      "base": "image.VirtualMachine.Microsoft",
+      "brief": "VM image",
+      "description": "Virtual machine image rule for Azure China East",
+      "pattern": {
+        "location": "ChinaEast"
+      },
+      "evaluator": {
+        "configKey": "ChinaEastVirtualMachineImage.json"
+      }
+    },
+    {
+      "name": "image.VirtualMachine.ChinaNorth2.Microsoft",
+      "base": "image.VirtualMachine.Microsoft",
+      "brief": "VM image",
+      "description": "Virtual machine image rule for Azure China North 2",
+      "pattern": {
+        "location": "ChinaNorth2"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorth2VirtualMachineImage.json"
+      }
+    },
+    {
+      "name": "image.VirtualMachine.ChinaEast2.Microsoft",
+      "base": "image.VirtualMachine.Microsoft",
+      "brief": "VM image",
+      "description": "Virtual machine image rule for Azure China East 2",
+      "pattern": {
+        "location": "ChinaEast2"
+      },
+      "evaluator": {
+        "configKey": "ChinaEast2VirtualMachineImage.json"
+      }
+    },
+    {
+      "name": "extension.VirtualMachine.Microsoft",
+      "isAbstract": true,
+      "base": "listRuleBase",
+      "pattern": {
+        "type": "Microsoft.Compute/virtualMachines",
+        "properties": {
+          "extensionProfile": {
+            "extensions": [
+              {
+                "properties": {
+                  "publisher": "{publisher}",
+                  "type": "{type}",
+                  "typeHandlerVersion": "{version}"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "extension.VirtualMachine.ChinaNorth.Microsoft",
+      "base": "extension.VirtualMachine.Microsoft",
+      "brief": "VM extension",
+      "description": "Virtual machine extension rule for Azure China North",
+      "pattern": {
+        "location": "ChinaNorth"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorthVirtualMachineExtensionImage.json"
+      }
+    },
+    {
+      "name": "extension.VirtualMachine.ChinaEast.Microsoft",
+      "base": "extension.VirtualMachine.Microsoft",
+      "brief": "VM extension",
+      "description": "Virtual machine extension rule for Azure China East",
+      "pattern": {
+        "location": "ChinaEast"
+      },
+      "evaluator": {
+        "configKey": "ChinaEastVirtualMachineExtensionImage.json"
+      }
+    },
+    {
+      "name": "extension.VirtualMachine.ChinaNorth2.Microsoft",
+      "base": "extension.VirtualMachine.Microsoft",
+      "brief": "VM extension",
+      "description": "Virtual machine extension rule for Azure China North 2",
+      "pattern": {
+        "location": "ChinaNorth2"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorth2VirtualMachineExtensionImage.json"
+      }
+    },
+    {
+      "name": "extension.VirtualMachine.ChinaEast2.Microsoft",
+      "base": "extension.VirtualMachine.Microsoft",
+      "brief": "VM extension",
+      "description": "Virtual machine extension rule for Azure China East 2",
+      "pattern": {
+        "location": "ChinaEast2"
+      },
+      "evaluator": {
+        "configKey": "ChinaEast2VirtualMachineExtensionImage.json"
+      }
+    },
+    {
+      "name": "vmSize.VirtualMachine.Microsoft",
+      "isAbstract": true,
+      "base": "listRuleBase",
+      "pattern": {
+        "type": "Microsoft.Compute/virtualMachines",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "{vmSize}"
+          }
+        }
+      }
+    },
+    {
+      "name": "vmSize.VirtualMachine.ChinaNorth.Microsoft",
+      "base": "vmSize.VirtualMachine.Microsoft",
+      "brief": "VM size",
+      "description": "Virtual machine size rule for Azure China North",
+      "pattern": {
+        "location": "ChinaNorth"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorthVirtualMachineSize.json"
+      }
+    },
+    {
+      "name": "vmSize.VirtualMachine.ChinaEast.Microsoft",
+      "base": "vmSize.VirtualMachine.Microsoft",
+      "brief": "VM size",
+      "description": "Virtual machine size rule for Azure China East",
+      "pattern": {
+        "location": "ChinaEast"
+      },
+      "evaluator": {
+        "configKey": "ChinaEastVirtualMachineSize.json"
+      }
+    },
+    {
+      "name": "vmSize.VirtualMachine.ChinaNorth2.Microsoft",
+      "base": "vmSize.VirtualMachine.Microsoft",
+      "brief": "VM size",
+      "description": "Virtual machine size rule for Azure China North 2",
+      "pattern": {
+        "location": "ChinaNorth2"
+      },
+      "evaluator": {
+        "configKey": "ChinaNorth2VirtualMachineSize.json"
+      }
+    },
+    {
+      "name": "vmSize.VirtualMachine.ChinaEast2.Microsoft",
+      "base": "vmSize.VirtualMachine.Microsoft",
+      "brief": "VM size",
+      "description": "Virtual machine size rule for Azure China East 2",
+      "pattern": {
+        "location": "ChinaEast2"
+      },
+      "evaluator": {
+        "configKey": "ChinaEast2VirtualMachineSize.json"
+      }
+    },
+    {
+      "name": "availabilityZone.VirtualMachine.Microsoft",
+      "base": "listRuleBase",
+      "brief": "VM availability zone",
+      "description": "Virtual machine availability zone rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Compute/virtualMachines",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "zones": "{zones}"
+      },
+      "evaluator": {
+        "configKey": "ChinaVirtualMachineAvailabilityZone.json"
+      }
+    },
+    {
+      "name": "kind.StorageAccount.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Storage kind",
+      "description": "Storage account kind rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "kind": "{kind}"
+      },
+      "evaluator": {
+        "configKey": "ChinaStorageAccountKind.json"
+      }
+    },
+    {
+      "name": "sku.IoTHub.Microsoft",
+      "base": "listRuleBase",
+      "brief": "IoT Hub SKU",
+      "description": "IoT Hub SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Devices/IotHubs",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{skuName}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaIoTHubSku.json"
+      }
+    },
+    {
+      "name": "maxSize.SqlDatabase.Microsoft",
+      "base": "listRuleBase",
+      "brief": "SQL database SKU",
+      "description": "SQL database maxSize rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Sql/servers/databases",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "serviceLevelObjective": "{serviceLevelObjective}",
+          "maxSizeBytes": "{maxSizeBytes}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaSQLDatabaseMaxSize.json"
+      }
+    },
+    {
+      "name": "maxSize.SqlElasticPool.Microsoft",
+      "base": "listRuleBase",
+      "brief": "SQL elastic pool SKU",
+      "description": "SQL elastic pool maxSize rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Sql/servers/elasticPools",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "edition": "{edition}",
+          "dtu": "{dtu}",
+          "storageMB": "{storageMB}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaSQLElasticPoolMaxSize.json"
+      }
+    },
+    {
+      "name": "vmSize.HDInsight.Microsoft",
+      "base": "listRuleBase",
+      "brief": "HDInsight SKU",
+      "description": "HDInsight vmSize rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.HDInsight/clusters",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "clusterDefinition": {
+            "kind": "{kind}"
+          },
+          "computeProfile": {
+            "roles": [
+              {
+                "name": "{roleName}",
+                "hardwareProfile": {
+                  "vmSize": "{vmSize}"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaHDInsightVmSize.json"
+      }
+    },
+    {
+      "name": "sku.ServerFarm.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Web server SKU",
+      "description": "Server farm SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Web/serverfarms",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "kind": "{kind}",
+        "sku": {
+          "name": "{name}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaServerFarmSKU.json"
+      }
+    },
+    {
+      "name": "PrivateIPAllocationMethod.LoadBalancer.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Load balancer private IP allocation method",
+      "description": "China load balancer private IP allocation method rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Network/loadBalancers",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "privateIPAllocationMethod": "{privateIPAllocationMethod}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaLoadBalancerprivateIPAllocationMethod.json"
+      }
+    },
+    {
+      "name": "Kind.SQLServer.Microsoft",
+      "base": "listRuleBase",
+      "brief": "SQL server kind",
+      "description": "Server server kind rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Sql/servers",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "kind": "{kind}"
+      },
+      "evaluator": {
+        "configKey": "ChinaSQLServerKind.json"
+      }
+    },
+    {
+      "name": "SKU.RedisCache.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Redis Cache SKU",
+      "description": "Redis Cache SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Cache/Redis",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "sku": {
+            "name": "{name}",
+            "family": "{family}",
+            "capacity": "{capacity}"
+          }
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaRedisCacheSku.json"
+      }
+    },
+    {
+      "name": "SKU.Disk.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Disk SKU",
+      "description": "Disk SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Compute/disks",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaDiskSKU.json"
+      }
+    },
+    {
+      "name": "SKU.SnapShotDisk.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Snapshot SKU",
+      "description": "Snap shot SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Compute/snapshots",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaSnapshotSKU.json"
+      }
+    },
+    {
+      "name": "SKU.EventHub.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Event Hub SKU",
+      "description": "Event Hub SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.EventHub/namespaces",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}",
+          "capacity": "{capacity}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaEventHubSKU.json"
+      }
+    },
+    {
+      "name": "SKU.ExpressRoute.Microsoft",
+      "base": "listRuleBase",
+      "brief": "ExpressRoute SKU",
+      "description": "ExpressRoute SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}",
+          "family": "{family}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaExpressRouteSKU.json"
+      }
+    },
+    {
+      "name": "ServiceProviderProperties.ExpressRoute.Microsoft",
+      "base": "listRuleBase",
+      "brief": "ExpressRoute provider",
+      "description": "ExpressRoute service provider properties rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.Network/expressRouteCircuits",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "serviceProviderProperties": {
+            "serviceProviderName": "{serviceProviderName}",
+            "peeringLocation": "{peeringLocation}",
+            "bandwidthInMbps": "{bandwidthInMbps}"
+          }
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaExpressRouteServiceProviderProperties.json"
+      }
+    },
+    {
+      "name": "SKU.ServiceBus.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Service Bus SKU",
+      "description": "Service bus SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.ServiceBus/namespaces",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaServiceBusSKU.json"
+      }
+    },
+    {
+      "name": "MaxSize.Topic.ServiceBus.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Service Bus Topic max size",
+      "description": "Service bus topic max size rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.ServiceBus/namespaces/topics",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "maxSizeInMegabytes": "{maxSizeInMegabytes}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaServiceBusTopicMaxSizeInMegabytes.json"
+      }
+    },
+    {
+      "name": "MaxSize.Queue.ServiceBus.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Service Bus Queue max size",
+      "description": "Service bus queue max size rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.ServiceBus/namespaces/queues",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "properties": {
+          "maxSizeInMegabytes": "{maxSizeInMegabytes}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaServiceBusQueueMaxSizeInMegabytes.json"
+      }
+    },
+    {
+      "name": "SKU.KeyVault.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Key valut SKU",
+      "description": "Key vault SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.KeyVault/vaults",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "family": "{family}",
+          "name": "{name}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaKeyVaultSKU.json"
+      }
+    },
+    {
+      "name": "SKU.APIManagement.Microsoft",
+      "base": "listRuleBase",
+      "brief": "API Management SKU",
+      "description": "API Management SKU rule for Azure China",
+      "pattern": {
+        "type": "Microsoft.ApiManagement/service",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "capacity": "{capacity}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaAPIManagementSKU.json"
+      }
+    }
+  ]
+}

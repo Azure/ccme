@@ -1,0 +1,82 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "ExpressRoute service provider {serviceProviderName} ({bandwidthInMbps}Mbps@{peeringLocation}) is not supported in Azure China",
+  "whitelist": [
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 50
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 100
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 500
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 1000
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 2000
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 5000
+    },
+    {
+      "serviceProviderName": "Shanghai Telecom Ethernet",
+      "peeringLocation": "Shanghai",
+      "bandwidthInMbps": 10000
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 50
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 100
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 200
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 500
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 1000
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 2000
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 5000
+    },
+    {
+      "serviceProviderName": "Beijing Telecom Ethernet",
+      "peeringLocation": "Beijing",
+      "bandwidthInMbps": 10000
+    }
+  ]
+}

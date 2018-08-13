@@ -1,0 +1,27 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "ExpressRoute SKU {tie} {family} is not supported in Azure China",
+  "whitelist": [
+    {
+      "name": "Standard_UnlimitedData",
+      "tier": "Standard",
+      "family": "UnlimitedData"
+    },
+    {
+      "name": "Premium_MeteredData",
+      "tier": "Premium",
+      "family": "MeteredData"
+    },
+    {
+      "name": "Standard_MeteredData",
+      "tier": "Standard",
+      "family": "MeteredData"
+    },
+    {
+      "name": "Premium_UnlimitedData",
+      "tier": "Premium",
+      "family": "UnlimitedData"
+    }
+  ]
+}

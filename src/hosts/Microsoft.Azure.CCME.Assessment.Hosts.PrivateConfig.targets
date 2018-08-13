@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="AfterBuild" >
+    <PropertyGroup Condition="Exists('$(AppConfig)')">
+      <PrivateConfigFilePath>..\..\..\private\configs\$(MSBuildProjectName)\$(AppConfig)</PrivateConfigFilePath>
+    </PropertyGroup>
+    <Copy Condition="Exists('$(PrivateConfigFilePath)')"
+          SourceFiles="$(PrivateConfigFilePath)"
+          DestinationFiles="$(OutputPath)$(TargetName)$(TargetExt).config"
+          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(CreateHardLinksForAdditionalFilesIfPossible)"
+          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForAdditionalFilesIfPossible)" />
+    <Message Condition="!Exists('$(PrivateConfigFilePath)')"
+             Text="Private config file '$(PrivateConfigFilePath)' not existed." />
+  </Target>
+</Project>
