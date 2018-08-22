@@ -1,14 +1,13 @@
 ﻿@{
     ViewBag.Title = "Migration Playbook";
 }
- <link href="~/Content/video-js.min.css" rel="stylesheet" />
+<link href="~/Content/video-js.min.css" rel="stylesheet" />
 
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script src="~/Scripts/video.min.js"></script>
-    <script>
-        videojs.options.flash.swf = "video-js.swf";
-    </script>
-
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/video.min.js"></script>
+<script>
+    videojs.options.flash.swf = "video-js.swf";
+</script>
 
 <div class="p-60 playbook">
     <h2 class="title-one">Migration Playbook</h2>
@@ -16,66 +15,62 @@
         <h2 class="title-two">Below are the suggested tools/services for major workload migration. </h2>
         <div class="video-list">
             <h3 class="title-three">Virtual Machines:</h3>
-            <div class="video-discription">Azure Site Recovery could be leveraged for Virtual Machines migration. We can follow <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/migrate-tutorial-aws-azure" target="_blank">this doc</a> to migrate Azure VM as AWS VM. Sample.</div>
-            <div class="video-small video-virtual-machines">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
-
-            </div>
+            <div class="video-discription">Azure Site Recovery could migrate Azure VMs between Azure regions. To migrate Azure VMs, you enable replication for them, and fail them over from the primary region to the secondary region of your choice. You could migrate VM with corresponding VNet, Storage, and Availability sets. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/azure-to-azure-support-matrix" target="_blank">Support Matrix and Limitations</a>.</div>
+            @if (ViewBag.CloudEnvironment == "AzureChinaCloud")
+            {
+                <div class="video-small video-virtual-machine-a2a">
+                    <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine A2A.mp4"></div>
+                </div>
+            }
+            else
+            {
+                <div class="video-small video-virtual-machine">
+                    <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine.mp4"></div>
+                </div>
+            }
         </div>
         <div class="video-list">
             <h3 class="title-three">Storage:</h3>
-            <div class="video-discription">AzCopy could be leveraged for Virtual Machines migration. Sample.</div>
+            <div class="video-discription">AzCopy could migrate Azure Storage between Azure regions. It is a command-line utility designed for server-side asynchronous copying data to/from Microsoft Azure Blob, File and Table storage. Authorized with the storage key or shared access signature (SAS), AzCopy is region insensitive and applicable for migration. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy" target="_blank">Transfer data with the AzCopy</a>.</div>
             <div class="video-small video-storage">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+                <div class="video-small-play video_link" videohref="~/Resources/videos/Blob Storage.mp4"></div>
             </div>
         </div>
         <div class="video-list">
-            <h3 class="title-three">Networking:</h3>
-            <div class="video-discription">MigAZ could be leveraged for Virtual Machines migration. Sample.</div>
-            <div class="video-small video-networking">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+            <h3 class="title-three">Virtual Network:</h3>
+            <div class="video-discription">MigAZ tool could migrate a complete set of ARM IaaS resources, include Virtual Network (Subnets, Network Security Group, Public IP, etc.). The tool uses Resource Manager REST API calls to gather all the details related resources. As per your selection, all the related configurations are exported into the JSON file which can be used for the deployment into ARM.</div>
+            <div class="video-small video-virtual-network">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Network.mp4"></div>
             </div>
         </div>
         <div class="video-list">
-            <h3 class="title-three">Database:</h3>
-            <div class="video-discription">SQL Server Integration Services could be leveraged for Database migration. Sample.</div>
+            <h3 class="title-three">SQL Database:</h3>
+            <div class="video-discription">SQL Server Integration Services (SSIS) could migrate Azure SQL Database between Azure regions. SSIS is a tool for extracting, transforming and loading data (ETL). The SQL Server Import and Export Wizard is the simplest way to create a basic Integration Services package that copies data from a source to a destination. The SSIS package could be launched immediately or saved for reuse and extend. See <a class="bold-link" href="https://docs.microsoft.com/en-us/sql/integration-services/import-export-data/import-and-export-data-with-the-sql-server-import-and-export-wizard?view=sql-server-2017" target="_blank">Import and Export Data with the SQL Server Import and Export Wizard</a>.</div>
             <div class="video-small video-database">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4"></div>
+                <div class="video-small-play video_link" videohref="~/Resources/videos/Azure SQL Database.mp4"></div>
             </div>
         </div>
         <div class="video-list">
             <h3 class="title-three">Web Application:</h3>
-            <div class="video-discription">App Service backup feature could be leveraged for Web Application migration. Sample.</div>
+            <div class="video-discription">The backup and restore feature in Azure App Service could migrate Web application between Azure regions. App Service can backup configuration, file content and connected database to an Azure Storage account. To migrate the Web application, you need to setup the backup storage, create the backup and copy it to destination region manually, then restore the backup to create a new Web application. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-restore" target="_blank">Restore an app in Azure</a>.</div>
             <div class="video-small video-web-application">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4">
-                </div>
+                <div class="video-small-play video_link" videohref="~/Resources/videos/App Service.mp4"></div>
             </div>
         </div>
 
         <div class="playbook-discription ">For China Policies, you could check below playbook for more details:</div>
         <div class="playbook-discription-sec"> <a class="bold-link" href="http://globalcustomerplaybook.azurewebsites.net/" target="_blank">http://globalcustomerplaybook.azurewebsites.net/</a></div>
-
     </div>
 
     <div class="video-full-screen" id="full-screen-video">
         <div class="video-container">
             <video id="my-video" class="video-js vjs-default-skin  vjs-big-play-centered " controls preload="none" width="878" height="568"
-                   poster="">
-
-                @*<source src="~/Resources/videos/HyperVideo2EnableProtection_mid.mp4" type='video/mp4' />*@
-                @*<source src="http://ss2.webm" type='video/webm' />
-                    <source src="http://ss3.ogv" type='video/ogg' />*@
-                @*<track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
-                    <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->*@
-            </video>
+                   poster=""></video>
         </div>
-
     </div>
-
 </div>
 @section scripts
 {
-
     <script type="text/javascript">
 
         $(".video_link").click(function () {
@@ -99,6 +94,5 @@
             e.stopPropagation();
             e.cancelBubble = true;
         });
-
     </script>
 }

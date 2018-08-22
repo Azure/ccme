@@ -78,7 +78,7 @@ function Deploy
     Write-Host "Updating reply URL of AAD application..."
     Set-AzureADApplication `
         -ObjectId $applicationCredentials.objectId `
-        -ReplyUrls "http://localhost:1894/"
+        -ReplyUrls "http://localhost:50080/"
     Write-Host "Done`n"
 
     $config = @(

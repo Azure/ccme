@@ -197,7 +197,7 @@ namespace Microsoft.Azure.CCME.Assessment.Extensions
             stringBuilder.AppendFormatLine(ResponseHeadersFormat, headerJson);
 
             var responseStream = webResponse.GetResponseStream();
-            if (responseStream != null)
+            if (responseStream != null && responseStream.CanRead)
             {
                 using (var streamReader = new StreamReader(responseStream))
                 {

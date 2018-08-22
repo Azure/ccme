@@ -19,9 +19,9 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort>44338</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
@@ -205,6 +205,7 @@
     <Compile Include="Controllers\AssessmentController.cs" />
     <Compile Include="Controllers\AssessmentWithUsageReportController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\FeedbackController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MigrationController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -254,8 +255,18 @@
     <Content Include="Resources\imgs\signIn.png" />
     <Content Include="Resources\imgs\signIn_hover.png" />
     <Content Include="Resources\imgs\contacts.png" />
-    <Content Include="Resources\imgs\video-poster.png" />
-    <Content Include="Resources\videos\HyperVideo2EnableProtection_mid.mp4" />
+    <Content Include="Resources\imgs\video-poster-app-service.png" />
+    <Content Include="Resources\imgs\video-poster-azure-sql-database.png" />
+    <Content Include="Resources\imgs\video-poster-blob-storage.png" />
+    <Content Include="Resources\imgs\video-poster-virtual-machine-a2a.png" />
+    <Content Include="Resources\imgs\video-poster-virtual-machine.png" />
+    <Content Include="Resources\imgs\video-poster-virtual-network.png" />
+    <Content Include="Resources\videos\App Service.mp4" />
+    <Content Include="Resources\videos\Virtual Machine A2A.mp4" />
+    <Content Include="Resources\videos\Virtual Machine.mp4" />
+    <Content Include="Resources\videos\Azure SQL Database.mp4" />
+    <Content Include="Resources\videos\Blob Storage.mp4" />
+    <Content Include="Resources\videos\Virtual Network.mp4" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -283,7 +294,8 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\video.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -299,6 +311,7 @@
     <Content Include="Views\Migration\Index.cshtml" />
     <Content Include="Views\Report\Index.cshtml" />
     <Content Include="Views\AssessmentWithUsageReport\Index.cshtml" />
+    <Content Include="Views\Feedback\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -357,9 +370,9 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1894</DevelopmentServerPort>
+          <DevelopmentServerPort>50080</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1894/</IISUrl>
+          <IISUrl>http://localhost:50080/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

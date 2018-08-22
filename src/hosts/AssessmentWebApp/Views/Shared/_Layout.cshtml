@@ -25,19 +25,19 @@
                 </button>
                 @Html.ActionLink("China Cloud Migration & Expansion (Preview)", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse">                
                 <ul class="nav navbar-nav navbar-right">
                     <li class="img-home">@Html.ActionLink("Home", "Index", "Home")</li>
                     @if (!Request.IsAuthenticated)
                     {
                         <li class="img-signin">@Html.ActionLink("SignIn", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, null)</li>
-                        <li class="img-feedback"><a href="https://github.com/Azure/ccme/issues">Feedback</a></li>
+                        <li class="img-feedback">@Html.ActionLink("Feedback", "Index", "Feedback")</li>
                     }
                     else
                     {
 
                         <li class="img-signin">@Html.ActionLink("Sign out", "SignOut", "Home")</li>
-                        <li class="img-feedback"><a href="https://github.com/Azure/ccme/issues">Feedback</a></li>
+                        <li class="img-feedback">@Html.ActionLink("Feedback", "Index", "Feedback")</li>
                         <li class="img-user">
                             <span class="about-me">
                                 @System.Security.Claims.ClaimsPrincipal.Current.FindFirst("name").Value

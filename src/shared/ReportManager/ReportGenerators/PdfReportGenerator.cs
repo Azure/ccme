@@ -71,13 +71,17 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 parityResult,
                 costEstimationResult);
 
+            bool needCostEstimation = !costEstimationResult.Details.All(d => d.EstimatedCost == null);
+            
             // TODO: extract common parameters for creating section
-
-            //Cost Estimation Section
-            CreateCostEstimationSection(
-                ref documentInfo,
-                regionInfo,
-                costEstimationResult);
+            if (needCostEstimation)
+            {
+                //Cost Estimation Section
+                CreateCostEstimationSection(
+                    ref documentInfo,
+                    regionInfo,
+                    costEstimationResult);
+            }
 
             //Appendix Full Resource List
             CreateAppendixResouceListSection(
@@ -92,7 +96,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             AppendTOCToIntroductionSection(
                 ref introSection,
                 costEstimationResult.SubscriptionName,
-                regionInfo.IsChinaRegion);
+                needCostEstimation);
 
             return documentInfo.MakePDF();
         }
@@ -100,14 +104,17 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
         private static void AppendTOCToIntroductionSection(
             ref Section introSection,
             string subscriptionName,
-            bool isChinaRegion)
+            bool needCostEstimation)
         {
             // TODO: move hard code string to resource file.
             introSection.AddParagraph("TABLE OF CONTENT", DocumentInfo.SubTitleStyleName);
 
             AddTOCParagraph(ref introSection, $"Assessment Summary for {subscriptionName}\t", $"MigrationSummary{subscriptionName}");
             AddTOCParagraph(ref introSection, $"Service Parity\t", "ServiceParity");
-            AddTOCParagraph(ref introSection, $"Cost Estimation\t", $"CostEstimation{subscriptionName}");
+            if (needCostEstimation)
+            {
+                AddTOCParagraph(ref introSection, $"Cost Estimation\t", $"CostEstimation{subscriptionName}");
+            }
             AddTOCParagraph(ref introSection, $"Full Resource List\t", $"AppendixResourceList{subscriptionName}");
             AddTOCParagraph(ref introSection, $"Conclusion\t", "Conclusion");
         }
