@@ -95,7 +95,6 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
         private static string PopulateMessage(string resource, string message, Match match)
         {
             // ToDo: load localized message from resource
-
             if (string.IsNullOrEmpty(message))
             {
                 return null;

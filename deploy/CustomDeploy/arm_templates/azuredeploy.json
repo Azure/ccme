@@ -95,8 +95,8 @@
           ],
           "name": "AllowAllWindowsAzureIps",
           "properties": {
-            "endIpAddress": "0.0.0.0",
-            "startIpAddress": "0.0.0.0"
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
           }
         }
       ]
@@ -128,7 +128,10 @@
       ],
       "properties": {
         "name": "[variables('webAppName')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]"
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]",
+        "siteConfig": {
+          "minTlsVersion": "1.2"
+        }
       },
       "resources": [
         {

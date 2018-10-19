@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Azure.Management.ResourceGraph;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
@@ -12,8 +13,10 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
     {
         ISubscriptionClient CreateSubscriptionClient();
         IResourceManagementClient CreateResourceManagementClient();
+        IResourceGraphClient CreateResourceGraphClient();
         ISubscriptionHelper CreateSubscriptionHelper();
         IResourceGroupHelper CreateResourceGroupHelper();
         IResourceHelper CreateResourceHelper(string subscriptionId);
+        IResourceGraphHelper CreateResourceGraphHelper();
     }
 }

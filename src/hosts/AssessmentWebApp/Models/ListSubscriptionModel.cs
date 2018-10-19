@@ -13,12 +13,19 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Models
     {
         public string TenantId { get; set; }
 
+        public IDictionary<string, string> Tenants { get; set; }
+
+        public List<SelectListItem> TenantItems =>
+            ToListItems(this.Tenants);
+
         public IDictionary<string, string> Subscriptions { get; set; }
 
         public List<SelectListItem> SubscriptionListItems =>
             ToListItems(this.Subscriptions);
 
         public string SelectedSubscriptionId { get; set; }
+
+        public string SelectedSubscriptionName { get; set; }
 
         public IDictionary<string, string> TargetRegions { get; set; }
 

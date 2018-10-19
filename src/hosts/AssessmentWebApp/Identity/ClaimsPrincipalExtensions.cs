@@ -22,17 +22,5 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Identity
 
         public static string GetTenantId(this ClaimsPrincipal user)
             => user.FindFirst(TenantIdClaimName).Value;
-
-        public static string GetAccessToken(this ClaimsPrincipal user)
-        {
-            var authContext = AuthenticationContextFactory.CreateNew(
-                user.GetTenantId(),
-                user.GetUserObjectId());
-
-            return authContext.TokenCache.ReadItems()
-                .Where(c => c.Resource == ConfigHelper.ResourceManagerEndpoint)
-                .Select(t => t.AccessToken)
-                .FirstOrDefault();
-        }
     }
 }

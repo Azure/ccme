@@ -27,12 +27,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ListPriceProviders
             ISet<string> meterIds)
         {
             return await Task.FromResult(this.context.UsageReport.Meters
-                .GroupBy(m => m.MeterId, StringComparer.InvariantCultureIgnoreCase)
+                .GroupBy(m => m.MeterId, StringComparer.OrdinalIgnoreCase)
                 .Select(g => new ListPriceMeter(
                     g.Key,
                     g.First().MeterName,
                     g.First().MeterCategory,
                     g.First().MeterSubCategory,
+                    g.First().Unit,
                     new SortedList<double, decimal>())));
         }
     }

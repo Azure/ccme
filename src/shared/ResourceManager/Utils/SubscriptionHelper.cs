@@ -64,7 +64,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
             IEnumerable<string> subscriptionNames,
             IEnumerable<string> subscriptionIds)
         {
-            var idSet = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+            var idSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             if (subscriptionNames != null)
             {

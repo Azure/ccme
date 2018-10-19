@@ -20,6 +20,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
 {
     public class AssessmentWithUsageReportController : BaseController
     {
+        [HttpGet]
         public ActionResult Index()
         {
             return this.View(new AssessmentWithUsageReportModel
@@ -29,10 +30,16 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Run(AssessmentWithUsageReportModel model)
         {
             try
             {
+                if (model.UsageReportFile == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Please upload a file");
+                }
+
                 var inputFileName = model.UsageReportFile.FileName;
                 var outputFileName = $"{Path.GetFileNameWithoutExtension(inputFileName)}-AssessmentReport.pdf";
 
@@ -63,7 +70,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
             }
             catch (Exception ex)
             {
-                Trace.TraceError($"Assessment with usage report failed: {ex}");
+                Trace.TraceError(FormattableString.Invariant($"Assessment with usage report failed: {ex}"));
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, ex.Message);
             }
         }

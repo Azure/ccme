@@ -6,12 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Microsoft.Azure.CCME.Assessment.Environments;
 using Microsoft.Azure.CCME.Assessment.Managers.RateCardApi.Models;
 using Microsoft.Rest;
 using Microsoft.Rest.Azure;
@@ -23,15 +24,12 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
 {
     internal sealed class RateCardClient : ServiceClient<RateCardClient>
     {
-        // TODO: accept common query info from constructor parameter
         private const string ApiVersion = @"2015-06-01-preview";
         private const string AcceptLanguage = @"en-US";
-
-        // TODO: accept payload query info from constructor parameter
         private const string Locale = "en-US";
-        private const string OfferDurableId = "MS-AZR-0121p";
-        private const string Currency = "USD";
-        private const string RegionInfo = "US";
+        private readonly string offerDurableId;
+        private readonly string currency;
+        private readonly string regionInfo;
 
         private static readonly JsonSerializerSettings DeserializationSettings =
             new JsonSerializerSettings
@@ -55,6 +53,19 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
             string accessToken,
             string baseUri)
         {
+            if (baseUri == new AzureEnvironmentHelper("AzureChinaCloud").ResourceManagerEndpoint)
+            {
+                this.offerDurableId = "MS-MC-AZR-0033P";
+                this.currency = "CNY";
+                this.regionInfo = "CN";
+            }
+            else
+            {
+                this.offerDurableId = "MS-AZR-0121P";
+                this.currency = "USD";
+                this.regionInfo = "US";
+            }
+
             this.credentials = new TokenCredentials(accessToken);
             this.baseUri = new Uri(baseUri);
         }
@@ -122,7 +133,6 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
                     httpResponseMessage);
 
                 // TODO: dump response content for unit test
-
                 var resultModel = SafeJsonConvert.DeserializeObject<TModel>(
                     responseContent,
                     DeserializationSettings);
@@ -180,7 +190,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
             }
             else
             {
-                cloudException = new CloudException($"Operation returned an invalid status code '{httpResponseMessage.StatusCode}'");
+                cloudException = new CloudException(FormattableString.Invariant($"Operation returned an invalid status code '{httpResponseMessage.StatusCode}'"));
             }
 
             cloudException.Request = new HttpRequestMessageWrapper(httpRequestMessage, null);
@@ -200,10 +210,10 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
         {
             var filterConditions = new Dictionary<string, string>
             {
-                { "OfferDurableId", OfferDurableId },
-                { "Currency", Currency },
+                { "OfferDurableId", this.offerDurableId },
+                { "Currency", this.currency },
                 { "Locale", Locale },
-                { "RegionInfo", RegionInfo },
+                { "RegionInfo", this.regionInfo },
             };
 
             var filter = string.Join(
@@ -228,8 +238,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi
         {
             var queryParameters = new Dictionary<string, string>
             {
-                { "reportedStartTime", startTime.ToString("s") },
-                { "reportedEndTime", endTime.ToString("s") },
+                { "reportedStartTime", startTime.ToString("s", CultureInfo.InvariantCulture) },
+                { "reportedEndTime", endTime.ToString("s", CultureInfo.InvariantCulture) },
             };
 
             return this.BuildCommerceRequestUri(

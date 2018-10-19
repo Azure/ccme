@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Web;
 
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Diagnostics
 
         public string SessionId => HttpContext.Current?.Session?.SessionID;
 
-        public string ThreadId => Thread.CurrentThread.ManagedThreadId.ToString();
+        public string ThreadId => Thread.CurrentThread.ManagedThreadId.ToString(CultureInfo.InvariantCulture);
 
         public IDictionary<string, string> Properties { get; set; }
     }

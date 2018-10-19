@@ -6,6 +6,7 @@
 
 using System;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -268,7 +269,7 @@ namespace Microsoft.Azure.CCME.Assessment.Extensions
             string format,
             params object[] args)
         {
-            return stringBuilder.AppendFormat(format, args).AppendLine();
+            return stringBuilder.AppendFormat(CultureInfo.InvariantCulture, format, args).AppendLine();
         }
 
         #endregion

@@ -18,6 +18,10 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models
         [Required]
         public string SubscriptionId { get; set; }
 
+        [Column(TypeName = "nvarchar(max)")]
+        [Required]
+        public string SubscriptionName { get; set; }
+
         [Column(TypeName = "nvarchar")]
         [MaxLength(50)]
         [Required]

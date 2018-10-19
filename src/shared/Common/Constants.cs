@@ -10,12 +10,14 @@ namespace Microsoft.Azure.CCME.Assessment
 {
     public static class Constants
     {
-        public static readonly IDictionary<string, string> TargetRegions = new Dictionary<string, string>
+        public static IDictionary<string, string> TargetRegions => new Dictionary<string, string>
         {
             { "chinanorth", "China North" },
             { "chinaeast", "China East" },
             { "chinanorth2", "China North 2" },
             { "chinaeast2", "China East 2" }
         };
+
+        public const string TokenKey = "ARMAccessToken";
     }
 }

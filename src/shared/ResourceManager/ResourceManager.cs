@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
 
         private readonly IAssessmentContext context;
 
-        internal IFactory Factory;
+        internal IFactory Factory { get; set; }
 
         public ResourceManager(IAssessmentContext context)
         {
@@ -56,7 +57,14 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Total {subscriptionIds.Count()} subscriptions found to be analyzed");
+                FormattableString.Invariant($"Total {subscriptionIds.Count()} subscriptions found to be analyzed"));
+
+            var resourceGraphHelper = clientFactory.CreateResourceGraphHelper();
+            var prefetchedResources = await resourceGraphHelper.GetResourcesAsync(subscriptionIds);
+            this.context.TelemetryManager.WriteLog(
+                TelemetryLogLevel.Information,
+                TelemetryLogSection,
+                FormattableString.Invariant($"Total {prefetchedResources.Count()} resources prefetched from Resource Graph"));
 
             var resourceGroupHelper = clientFactory.CreateResourceGroupHelper();
 
@@ -78,21 +86,23 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                 this.context.TelemetryManager.WriteLog(
                     TelemetryLogLevel.Information,
                     TelemetryLogSection,
-                    $"{resourceGroupNames.Count()} resource groups found in subscription `{subscriptionId}`");
+                    FormattableString.Invariant($"{resourceGroupNames.Count()} resource groups found in subscription `{subscriptionId}`"));
 
-                var resourceHelper = clientFactory.CreateResourceHelper(subscriptionId);
-                foreach (var resourceGroupName in resourceGroupNames)
+                using (var resourceHelper = clientFactory.CreateResourceHelper(subscriptionId))
                 {
-                    var resources = await resourceHelper.GetResourcesAsync(
-                        resourceGroupName,
-                        new Dictionary<string, ResourceModel>(),
-                        detailedResourceTypes);
-                    resourceGroups.Add(resourceGroupName, resources);
+                    foreach (var resourceGroupName in resourceGroupNames)
+                    {
+                        var resources = await resourceHelper.GetResourcesAsync(
+                            resourceGroupName,
+                            prefetchedResources,
+                            detailedResourceTypes);
+                        resourceGroups.Add(resourceGroupName, resources);
 
-                    this.context.TelemetryManager.WriteLog(
-                        TelemetryLogLevel.Information,
-                        TelemetryLogSection,
-                        $"{resources.Count()} resources retrieved from resource group `{resourceGroupName}` ({resourceGroupNames.TakeWhile(s => s != resourceGroupName).Count()}/{resourceGroupNames.Count()}) of subscriptions `{subscriptionId}` ({subscriptionIds.TakeWhile(s => s != subscriptionId).Count()}/{subscriptionIds.Count()})");
+                        this.context.TelemetryManager.WriteLog(
+                            TelemetryLogLevel.Information,
+                            TelemetryLogSection,
+                            FormattableString.Invariant($"{resources.Count()} resources retrieved from resource group `{resourceGroupName}` ({resourceGroupNames.TakeWhile(s => s != resourceGroupName).Count()}/{resourceGroupNames.Count()}) of subscriptions `{subscriptionId}` ({subscriptionIds.TakeWhile(s => s != subscriptionId).Count()}/{subscriptionIds.Count()})"));
+                    }
                 }
 
                 models.Add(new SubscriptionModel

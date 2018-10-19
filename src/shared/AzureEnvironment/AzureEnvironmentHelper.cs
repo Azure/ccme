@@ -12,17 +12,17 @@ namespace Microsoft.Azure.CCME.Assessment.Environments
 {
     public class AzureEnvironmentHelper
     {
-        static readonly IReadOnlyDictionary<string, string> RegionToEnvironmentNameMapping = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly IReadOnlyDictionary<string, string> RegionToEnvironmentNameMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             { "China North", "AzureChinaCloud" },
             { "China East", "AzureChinaCloud" },
             { "China North 2", "AzureChinaCloud" },
-            { "China East 2", "AzureChinaCloud" },
+            { "China East 2", "AzureChinaCloud" }
         };
 
         public AzureEnvironmentHelper(string azureEnvironmentName)
         {
-            if (string.IsNullOrWhiteSpace(azureEnvironmentName))
+            if (AzureEnvironment.FromName(azureEnvironmentName) == null)
             {
                 var region = Environment.GetEnvironmentVariable("REGION_NAME");
                 if (!string.IsNullOrWhiteSpace(region) && RegionToEnvironmentNameMapping.TryGetValue(region, out var cloudEnvironment))

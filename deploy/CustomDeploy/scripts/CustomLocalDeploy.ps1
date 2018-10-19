@@ -83,19 +83,23 @@ function Deploy
 
     $config = @(
         @{
-            key = "AssessmentWebApp.ApplicationId"
+            key = "CloudEnvironment"
+            value = (Get-AzureRmContext).Environment.Name
+        },
+        @{
+            key = "ApplicationId"
             value = $applicationCredentials.applicationId
         },
         @{
-            key = "AssessmentWebApp.ApplicationSecret"
+            key = "ApplicationSecret"
             value = $applicationCredentials.applicationSecret
         },
         @{
-            key = "AssessmentWebApp.DatabaseConnectionString"
+            key = "CCMEDB"
             value = $deployment.Outputs.sqlDatabaseConnectionString.Value
         },
         @{
-            key = "AssessmentWebApp.StorageAccountConnectionString"
+            key = "StorageAccountConnectionString"
             value = $deployment.Outputs.storageAccountConnectionString.Value
         }
     )

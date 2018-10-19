@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,6 +13,7 @@ using Microsoft.Azure.CCME.Assessment.Hosts.DAL;
 using Microsoft.Azure.CCME.Assessment.Hosts.Diagnostics;
 using Microsoft.Azure.CCME.Assessment.Hosts.Identity;
 using Microsoft.Azure.CCME.Assessment.Hosts.Models;
+using Microsoft.Azure.CCME.Assessment.Hosts.Tokens;
 using Microsoft.Azure.CCME.Assessment.Managers;
 using Newtonsoft.Json;
 
@@ -42,7 +44,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
                 @"AssessmentController::ListSubscription",
                 telemetryContext);
 
-            var accessToken = user.GetAccessToken();
+            var accessToken = user.Claims.SingleOrDefault(c => c.Type == Constants.TokenKey).Value;
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
@@ -63,21 +65,23 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
             var resourceManager = new ResourceManager(context);
             var subscriptions = await resourceManager.ListSubscriptionsAsync();
             var tasks = DataAccess.ListTasks(tenantId, userObjectId);
+            var tenants = await Utilities.TenantNameHelper.ListTenants(accessToken, ConfigHelper.ResourceManagerEndpoint);
 
             TelemetryHelper.LogInformation(
-                $"Got {subscriptions.Count} subscriptions",
+                FormattableString.Invariant($"Got {subscriptions.Count} subscriptions"),
                 telemetryContext);
 
             var model = new ListSubscriptionModel
             {
                 TenantId = tenantId,
+                Tenants = tenants,
                 Subscriptions = subscriptions,
                 TargetRegions = Constants.TargetRegions,
-                AnyTask = tasks.Any()
+                AnyTask = tasks.Any(),
             };
 
             TelemetryHelper.LogVerbose(
-                $"AssessmentController::ListSubscription::View with model: {JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })}",
+                FormattableString.Invariant($"AssessmentController::ListSubscription::View with model: {JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })}"),
                 telemetryContext);
 
             return this.View(model);
@@ -85,6 +89,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public void SwitchTenant(ListSubscriptionModel model)
         {
             var owinContext = this.HttpContext.GetOwinContext();
@@ -107,7 +112,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
                 telemetryContext);
 
             TelemetryHelper.LogInformation(
-                $"Switch to tenant {model.TenantId}",
+                FormattableString.Invariant($"Switch to tenant {model.TenantId}"),
                 telemetryContext);
 
             owinContext.Challenge(
@@ -117,12 +122,15 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public ActionResult CreateNewTask(ListSubscriptionModel model)
         {
             var owinContext = this.HttpContext.GetOwinContext();
             var user = owinContext.GetUser();
             var tenantId = user.GetTenantId();
             var userObjectId = user.GetUserObjectId();
+
+            var accessToken = user.Claims.SingleOrDefault(c => c.Type == Constants.TokenKey).Value;
 
             var telemetryContext = new TelemetryContext
             {
@@ -134,16 +142,18 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
                 @"AssessmentController::CreateNewTask",
                 telemetryContext);
 
-            //TODO: check tenant id
-
+            // TODO: check tenant id
             var taskId = DataAccess.CreateNewTask(
                 tenantId,
                 userObjectId,
                 model.SelectedSubscriptionId,
+                model.SelectedSubscriptionName,
                 model.SelectedTargetRegion);
 
+            TokenStore.Instance.AddToken(taskId, accessToken, userObjectId);
+
             TelemetryHelper.LogInformation(
-                $"Created task with id {taskId} for subscription {model.SelectedSubscriptionId} and target region {model.SelectedTargetRegion}",
+                FormattableString.Invariant($"Created task with id {taskId} for subscription {model.SelectedSubscriptionId} and target region {model.SelectedTargetRegion}"),
                 telemetryContext);
 
             return this.RedirectToAction("Index", "Report");

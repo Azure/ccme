@@ -38,9 +38,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
         public async Task<IEnumerable<SubscriptionModel>> GetResourcesAsync(IEnumerable<string> detailedResourceTypes = null)
         {
             var resourceGroups = this.context.UsageReport.Meters
-                .GroupBy(m => m.ResourceId, StringComparer.InvariantCultureIgnoreCase)
+                .GroupBy(m => m.ResourceId, StringComparer.OrdinalIgnoreCase)
                 .Select(g => g.First())
-                .GroupBy(m => m.ResourceGroup, StringComparer.InvariantCultureIgnoreCase)
+                .GroupBy(m => m.ResourceGroup, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(
                     g => g.Key,
                     g => g.Select(r => new ResourceModel
@@ -58,7 +58,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                 this.context.TelemetryManager.WriteLog(
                     TelemetryLogLevel.Information,
                     TelemetryLogSection,
-                    $"{pair.Value.Count()} resources retrieved from resource group `{pair.Key}`");
+                    FormattableString.Invariant($"{pair.Value.Count()} resources retrieved from resource group `{pair.Key}`"));
             }
 
             return await Task.FromResult(new[]

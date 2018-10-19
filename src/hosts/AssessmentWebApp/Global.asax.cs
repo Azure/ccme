@@ -6,8 +6,10 @@
 
 using System;
 using System.Diagnostics;
+using System.IdentityModel.Claims;
 using System.Threading;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -22,6 +24,8 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
     {
         protected void Application_Start()
         {
+            ConfigHelper.InitializeAsync().GetAwaiter().GetResult();
+
             TelemetryHelper.WriteEvent(TelemetryEventNames.WebAppStart);
             TelemetryHelper.LogInformation("Application_Start");
 
@@ -30,7 +34,8 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //IdentityModelEventSource.ShowPII = true;
+            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+
             DataAccess.InitDatabase();
             TaskSchedulerJob.Start();
         }
@@ -40,7 +45,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
             TaskSchedulerJob.Stop();
 
             TelemetryHelper.WriteEvent(TelemetryEventNames.WebAppEnd);
-            TelemetryHelper.LogInformation($"Application_End, shutdown reason = {HostingEnvironment.ShutdownReason}");
+            TelemetryHelper.LogInformation(FormattableString.Invariant($"Application_End, shutdown reason = {HostingEnvironment.ShutdownReason}"));
             TelemetryHelper.Flush();
             Thread.Sleep(TimeSpan.FromSeconds(2));
         }

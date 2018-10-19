@@ -16,14 +16,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
         /// </summary>
         /// <param name="key">The configuration key.</param>
         /// <param name="configType">
-        /// The configuration type, the default value is 
-        /// <see cref="ConfigType.GlobalSettings">.
+        /// The configuration type
         /// </param>
         /// <returns>
         /// The configuration value.
         /// </returns>
         string GetValue(
-            string key, 
+            string key,
             ConfigType configType = ConfigType.GlobalSettings);
     }
 }

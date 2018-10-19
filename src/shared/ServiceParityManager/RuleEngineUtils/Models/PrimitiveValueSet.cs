@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Models
         /// <summary>
         /// Expand single value set contains array field to multiple value sets contains only primitive value
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Set of the primitive values</returns>
         public IEnumerable<PrimitiveValueSet> Expand()
         {
             var arrayKey = this.Keys.FirstOrDefault(key => this[key] is Array);

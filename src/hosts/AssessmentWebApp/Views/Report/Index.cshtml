@@ -33,7 +33,7 @@
                                     @foreach (var task in Model.AssessmentTasks.OrderByDescending(t => t.CreatedTime))
                                     {
                                         <tr class="row100 body">
-                                            <td class="cell100 column1">@task.SubscriptionId</td>
+                                            <td class="cell100 column1">@task.SubscriptionName</td>
                                             <td class="cell100 column2">@DateTime.SpecifyKind(task.CreatedTime, DateTimeKind.Utc).ToLocalTime().ToString("yyyyMMdd HH:mm:ss")</td>
                                             <td class="cell100 column3">@task.Status</td>
                                             <td class="cell100 column4">

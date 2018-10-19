@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Migration Playbook";
+    ViewBag.Title = "Migration Guidebook";
 }
 <link href="~/Content/video-js.min.css" rel="stylesheet" />
 
@@ -10,24 +10,27 @@
 </script>
 
 <div class="p-60 playbook">
-    <h2 class="title-one">Migration Playbook</h2>
+    <h2 class="title-one">Migration Guidebook</h2>
     <div class="container-a">
-        <h2 class="title-two">Below are the suggested tools/services for major workload migration. </h2>
+        <div>Migration and expansion between Global Azure and Azure China have unique complexities in internet environment and process aspects, due to the sovereign cloud nature of Azure China. Customer could refer to <a href="https://docs.microsoft.com/en-us/azure/china/">Azure China 21Vianet</a> to plan the migration from business, legal and compliance perspective.</div>
+        <br />
+        <div>The Migration playbook here laser focus on the technical perspective and introduce the suggested migration tools & services for major workload migration.</div>
+
         <div class="video-list">
             <h3 class="title-three">Virtual Machines:</h3>
             <div class="video-discription">Azure Site Recovery could migrate Azure VMs between Azure regions. To migrate Azure VMs, you enable replication for them, and fail them over from the primary region to the secondary region of your choice. You could migrate VM with corresponding VNet, Storage, and Availability sets. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/azure-to-azure-support-matrix" target="_blank">Support Matrix and Limitations</a>.</div>
             @if (ViewBag.CloudEnvironment == "AzureChinaCloud")
-            {
-                <div class="video-small video-virtual-machine-a2a">
-                    <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine A2A.mp4"></div>
-                </div>
-            }
-            else
-            {
-                <div class="video-small video-virtual-machine">
-                    <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine.mp4"></div>
-                </div>
-            }
+        {
+            <div class="video-small video-virtual-machine-a2a">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine A2A.mp4"></div>
+            </div>
+    }
+    else
+    {
+        <div class="video-small video-virtual-machine">
+            <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine.mp4"></div>
+        </div>
+}
         </div>
         <div class="video-list">
             <h3 class="title-three">Storage:</h3>
@@ -38,7 +41,7 @@
         </div>
         <div class="video-list">
             <h3 class="title-three">Virtual Network:</h3>
-            <div class="video-discription">MigAZ tool could migrate a complete set of ARM IaaS resources, include Virtual Network (Subnets, Network Security Group, Public IP, etc.). The tool uses Resource Manager REST API calls to gather all the details related resources. As per your selection, all the related configurations are exported into the JSON file which can be used for the deployment into ARM.</div>
+            <div class="video-discription"><a class="bold-link" href="https://github.com/Azure/migAz">MigAZ</a> tool could migrate a complete set of ARM IaaS resources, include Virtual Network (Subnets, Network Security Group, Public IP, etc.). The tool uses Resource Manager REST API calls to gather all the details related resources. As per your selection, all the related configurations are exported into the JSON file which can be used for the deployment into ARM.</div>
             <div class="video-small video-virtual-network">
                 <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Network.mp4"></div>
             </div>
@@ -57,9 +60,13 @@
                 <div class="video-small-play video_link" videohref="~/Resources/videos/App Service.mp4"></div>
             </div>
         </div>
-
-        <div class="playbook-discription ">For China Policies, you could check below playbook for more details:</div>
-        <div class="playbook-discription-sec"> <a class="bold-link" href="http://globalcustomerplaybook.azurewebsites.net/" target="_blank">http://globalcustomerplaybook.azurewebsites.net/</a></div>
+        <div class="video-list">
+            <h3 class="title-three">Azure Cosmos DB:</h3>
+            <div class="video-discription">The Azure Cosmos DB Data Migration Tool could migrate Cosmos DB between Azure regions. The Data Migration tool is an open-source solution that imports data to Azure Cosmos DB from a variety of sources. To migrate the Cosmos DB, you need to provide the connections for both source and target database and the collection name. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/cosmos-db/import-data" target="_blank">Use Data migration tool to migrate your data to Azure Cosmos DB</a>.</div>
+            <div class="video-small video-cosmosdb">
+                <div class="video-small-play video_link" videohref="~/Resources/videos/CosmosDB.mp4"></div>
+            </div>
+        </div>
     </div>
 
     <div class="video-full-screen" id="full-screen-video">

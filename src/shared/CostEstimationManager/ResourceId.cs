@@ -27,13 +27,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
 
         private readonly string[] parts;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="id">ARM resource ID</param>
         public ResourceId(string id)
         {
-            this.Id = id.TrimStart('/').ToLower(); // IMPORTANT!
+            this.Id = id.TrimStart('/').ToLowerInvariant(); // IMPORTANT!
             this.parts = this.Id.Split(Separator);
             if (this.parts.Length != ResourcePartsCount && this.parts.Length != SubResourcePartsCount && this.parts.Length != SubSubResourcePartsCount)
             {
@@ -43,7 +39,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
 
         public string Id { get; }
         public string SubscriptionId => this.parts[SubIdIndex];
-        public string ResourceGroup => this.parts[ResourceGroupIndex].ToLower();
+        public string ResourceGroup => this.parts[ResourceGroupIndex].ToLowerInvariant();
         public string Provider => this.parts[ProviderIndex];
         public string ResourceType => this.parts[ResourceTypeIndex];
         public string ResourceName => this.parts[ResourceNameIndex];

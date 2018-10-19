@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Azure.Management.ResourceGraph;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Rest;
 
@@ -14,11 +15,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
     [ExcludeFromCodeCoverage]
     internal sealed class Factory : IFactory
     {
+        private readonly string accessToken;
         private readonly TokenCredentials credentials;
         private readonly Uri baseUri;
 
         public Factory(string accessToken, string baseUri)
         {
+            this.accessToken = accessToken;
             this.credentials = new TokenCredentials(accessToken);
             this.baseUri = new Uri(baseUri);
         }
@@ -31,6 +34,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
         public IResourceManagementClient CreateResourceManagementClient()
         {
             return new ResourceManagementClient(this.baseUri, this.credentials);
+        }
+
+        public IResourceGraphClient CreateResourceGraphClient()
+        {
+            return new ResourceGraphClient(this.baseUri, this.credentials);
         }
 
         public ISubscriptionHelper CreateSubscriptionHelper()
@@ -46,6 +54,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
         public IResourceHelper CreateResourceHelper(string subscriptionId)
         {
             return new ResourceHelper(this, subscriptionId);
+        }
+
+        public IResourceGraphHelper CreateResourceGraphHelper()
+        {
+            return new ResourceGraphHelper(this);
         }
     }
 }

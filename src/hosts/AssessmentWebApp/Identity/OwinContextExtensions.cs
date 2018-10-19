@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.Security.Claims;
 using Microsoft.Azure.CCME.Assessment.Hosts.Diagnostics;
 using Microsoft.Owin;
@@ -45,7 +46,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Identity
 
             if (context.Environment.TryGetValue(TenantIdEnvKey, out object obj))
             {
-                tenantId = Convert.ToString(obj);
+                tenantId = Convert.ToString(obj, CultureInfo.InvariantCulture);
             }
 
             return tenantId;

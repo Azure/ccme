@@ -6,14 +6,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Azure.CCME.Assessment.Exceptions;
 using Microsoft.Azure.CCME.Assessment.Hosts.DAL;
 using Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models;
 using Microsoft.Azure.CCME.Assessment.Hosts.Diagnostics;
-using Microsoft.Azure.CCME.Assessment.Hosts.Identity;
+using Microsoft.Azure.CCME.Assessment.Hosts.Tokens;
 using Microsoft.Azure.CCME.Assessment.Services;
 
 namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
@@ -32,31 +34,31 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
             TelemetryHelper.WriteEvent(TelemetryEventNames.TaskSchedulerStart);
 
             TaskFactory.StartNew(() =>
-             {
-                 while (true)
-                 {
-                     if (CancellationTokenSource.IsCancellationRequested)
-                     {
-                         TelemetryHelper.LogInformation(@"Break task iteration loop.");
-                         break;
-                     }
+            {
+                while (true)
+                {
+                    if (CancellationTokenSource.IsCancellationRequested)
+                    {
+                        TelemetryHelper.LogInformation(@"Break task iteration loop.");
+                        break;
+                    }
 
-                     try
-                     {
-                         StartIteration(CancellationTokenSource.Token);
-                         TelemetryHelper.WriteMetric(
-                             TelemetryMetricNames.TaskSchedulerHeartBeat);
-                     }
-                     catch (Exception ex)
-                     {
-                         TelemetryHelper.LogError(
-                             @"Run task iteration failed.",
-                             ex);
-                     }
+                    try
+                    {
+                        StartIteration(CancellationTokenSource.Token);
+                        TelemetryHelper.WriteMetric(
+                            TelemetryMetricNames.TaskSchedulerHeartBeat);
+                    }
+                    catch (Exception ex)
+                    {
+                        TelemetryHelper.LogError(
+                            @"Run task iteration failed.",
+                            ex);
+                    }
 
-                     Thread.Sleep(SleepTime);
-                 }
-             });
+                    Thread.Sleep(SleepTime);
+                }
+            });
         }
 
         public static void Stop()
@@ -71,7 +73,6 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
             var tasks = DataAccess.ListAllNotStartedTasks();
 
             // TODO: retry or abandon hanging tasks
-
             if (!tasks.Any())
             {
                 return;
@@ -122,20 +123,31 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
             {
                 TelemetryHelper.LogVerbose(@"Task starting.", telemetryContext);
 
+                var accessToken = TokenStore.Instance.GetTokenByTaskId(taskDefinition.Id);
+
+                if (accessToken == null)
+                {
+                    return;
+                }
+
                 DataAccess.UpdateTaskStatusProcessing(taskDefinition.Id);
+                
                 TelemetryHelper.LogInformation(@"Updated task status to processing.", telemetryContext);
 
                 try
                 {
-                    await this.ProcessTaskAsync(taskDefinition, telemetryContext);
+                    await this.ProcessTaskAsync(taskDefinition, telemetryContext, accessToken);
                 }
                 catch (Exception ex)
                 {
                     string failedReason;
-
                     if (ex is AssessmentException assessmentException)
                     {
                         failedReason = $"Generate assessment report failed: {ex.Message}";
+                    }
+                    else if (ex is ResourceException resourceException)
+                    {
+                        failedReason = ex.Message;
                     }
                     else
                     {
@@ -149,23 +161,17 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
                        failedReason,
                        ex);
 
+                    TokenStore.Instance.RemoveTokenWrapperByTaskId(taskDefinition.Id);
+
                     TelemetryHelper.LogInformation(@"Updated task status to failed.", telemetryContext);
                 }
             }
 
             private async Task ProcessTaskAsync(
                 AssessmentTask taskDefinition,
-                TelemetryContext telemetryContext)
+                TelemetryContext telemetryContext,
+                string accessToken)
             {
-                var authContext = AuthenticationContextFactory.CreateNew(
-                    taskDefinition.TenantId,
-                    taskDefinition.UserObjectId);
-
-                var accessToken = authContext.TokenCache.ReadItems()
-                    .Where(c => c.Resource == ConfigHelper.ResourceManagerEndpoint)
-                    .Select(t => t.AccessToken)
-                    .FirstOrDefault();
-
                 var telemetryManager = TelemetryHelper.CreateTelemetryManager(telemetryContext);
 
                 var context = AssessmentHelper.GetEnvironmentContext(
@@ -187,12 +193,14 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
                 File.Delete(assessmentReport.ReportFilePath);
 
                 TelemetryHelper.LogInformation(
-                    $"Saved report {reportId} to database and storage account.",
+                    FormattableString.Invariant($"Saved report {reportId} to database and storage account."),
                     telemetryContext);
 
                 DataAccess.UpdateTaskStatusCompleted(
                     taskDefinition.Id,
                     reportId);
+
+                TokenStore.Instance.RemoveTokenWrapperByTaskId(taskDefinition.Id);
 
                 TelemetryHelper.LogInformation(
                     @"Updated task status to completed.",
@@ -207,7 +215,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
 
                 var flushWaitingTime = TimeSpan.FromSeconds(60);
                 TelemetryHelper.LogVerbose(
-                    $"Waiting flush for {flushWaitingTime}.",
+                    FormattableString.Invariant($"Waiting flush for {flushWaitingTime}."),
                     telemetryContext);
                 Thread.Sleep(flushWaitingTime);
             }
@@ -221,7 +229,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Tasks
                     UserObjectId = taskDefinition.UserObjectId,
                     Properties = new Dictionary<string, string>
                     {
-                        { "TaskId", taskDefinition.Id.ToString() },
+                        { "TaskId", taskDefinition.Id.ToString(CultureInfo.InvariantCulture) },
                         { "SubscriptionId", taskDefinition.SubscriptionId },
                         { "TargetRegion", taskDefinition.TargetRegion },
                     }

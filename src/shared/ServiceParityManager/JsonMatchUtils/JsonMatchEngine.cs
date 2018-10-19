@@ -23,7 +23,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.JsonMatchUtils
         public JsonMatchEngine(JToken pattern, bool ignoreCase = true)
         {
             this.pattern = pattern;
-            this.stringComparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
+            this.stringComparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         }
 
         public IEnumerable<Match> Matches(JToken input)

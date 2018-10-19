@@ -610,6 +610,138 @@
       "evaluator": {
         "configKey": "ChinaAPIManagementSKU.json"
       }
+    },
+    {
+      "name": "Kind.CognitiveServices.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Cognitive Service Kind",
+      "description": "Cognitive Service Kind for Azure China",
+      "pattern": {
+        "type": "Microsoft.CognitiveServices/accounts",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "kind": "{kind}"
+      },
+      "evaluator": {
+        "configKey": "ChinaCognitiveServiceKind.json"
+      }
+    },
+    {
+      "name": "SKU.CognitiveServices.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Cognitive Service SKU",
+      "description": "Cognitive Service SKU for Azure China",
+      "pattern": {
+        "type": "Microsoft.CognitiveServices/accounts",
+        "location": [ "ChinaNorth", "ChinaEast", "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaCognitiveServiceSKU.json"
+      }
+    },
+    {
+      "name": "SKU.DBforMySQL.Microsoft",
+      "base": "listRuleBase",
+      "brief": "MySQL Database SKU",
+      "description": "MySQL Database SKU for Azure China",
+      "pattern": {
+        "type": "Microsoft.DBforMySQL/servers",
+        "location": [ "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}",
+          "family": "{family}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaDBforMySQLSKU.json"
+      }
+    },
+    {
+      "name": "SKU.DBforPostgreSQL.Microsoft",
+      "base": "listRuleBase",
+      "brief": "PostgreSQL Database SKU",
+      "description": "PostgreSQL Database SKU for Azure China",
+      "pattern": {
+        "type": "Microsoft.DBforPostgreSQL/servers",
+        "location": [ "ChinaNorth2", "ChinaEast2" ],
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}",
+          "family": "{family}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaPostgreSQLSKU.json"
+      }
+    },
+    {
+      "name": "SKU.NotificationHub.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Notification Hub SKU",
+      "description": "Notification Hub SKU for Azure China",
+      "pattern": {
+        "location": [ "ChinaNorth", "ChinaEast" ],
+        "type": "Microsoft.NotificationHubs/namespaces",
+        "sku": {
+          "name": "{name}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaNotificationHubSKU.json"
+      }
+    },
+    {
+      "name": "SKU.AnalysisService.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Analysis Service SKU",
+      "description": "Analysis Service SKU for Azure China",
+      "pattern": {
+        "location": [ "ChinaNorth" ],
+        "type": "Microsoft.Microsoft.AnalysisServices/servers",
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaAnalysisServiceSKU.json"
+      }
+    },
+    {
+      "name": "SKU.PowerBIWorkspaceCollection.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Power BI Workspace Collection SKU",
+      "description": "Power BI Workspace Collection SKU for Azure China",
+      "pattern": {
+        "location": [ "ChinaNorth", "ChinaEast" ],
+        "type": "Microsoft.PowerBI/workspaceCollections",
+        "sku": {
+          "name": "{name}",
+          "tier": "{tier}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaPowerBIWorkspaceCollectionSKU.json"
+      }
+    },
+    {
+      "name": "SKU.Cdn.Microsoft",
+      "base": "listRuleBase",
+      "brief": "Cdn SKU",
+      "description": "Cdn SKU for Azure China",
+      "pattern": {
+        "location": [ "ChinaNorth", "ChinaEast" ],
+        "type": "Microsoft.Cdn/profiles",
+        "sku": {
+          "name": "{name}"
+        }
+      },
+      "evaluator": {
+        "configKey": "ChinaCdnSKU.json"
+      }
     }
   ]
 }

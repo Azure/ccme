@@ -14,6 +14,8 @@ namespace Microsoft.Azure.CCME.Assessment.Models
     {
         public string SubscriptionName { get; set; }
 
+        public string SubscriptionId { get; set; }
+
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -21,6 +23,10 @@ namespace Microsoft.Azure.CCME.Assessment.Models
         public string TargetRegion { get; set; }
 
         public IEnumerable<CostEstimationDetail> Details { get; set; }
+
+        public bool HasError { get; set; }
+
+        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> LocationMap { get; set; }
 
         public IDictionary<string, IEnumerable<CostEstimationDetail>> DetailsByResourceGroup =>
             this.Details.GroupBy(d => d.ResourceGroupName)

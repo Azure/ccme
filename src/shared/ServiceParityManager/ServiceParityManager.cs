@@ -42,12 +42,12 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"{this.rules.Count()} rules retrieved from configuration store");
+                FormattableString.Invariant($"{this.rules.Count()} rules retrieved from configuration store"));
 
             return this.rules
                 .Select(r => r.Pattern.Value<string>("type"))
                 .Where(s => !PlaceholderHelper.IsPlaceholder(s, out var unused))
-                .Distinct(StringComparer.InvariantCultureIgnoreCase);
+                .Distinct(StringComparer.OrdinalIgnoreCase);
         }
 
         public ServiceParityResult Process(IEnumerable<SubscriptionModel> subscriptions, string targetRegion)
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Overall status: Pass = {result.Pass}");
+                FormattableString.Invariant($"Overall status: Pass = {result.Pass}"));
 
             foreach (var pair in result.Details.Where(pair => !pair.Value.Pass))
             {
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                     this.context.TelemetryManager.WriteLog(
                         TelemetryLogLevel.Warning,
                         TelemetryLogSection,
-                        $"Exception raised for resource {pair.Key}",
+                        FormattableString.Invariant($"Exception raised for resource {pair.Key}"),
                         null,
                         pair.Value.Exception);
                     continue;
@@ -78,7 +78,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                 this.context.TelemetryManager.WriteLog(
                     TelemetryLogLevel.Information,
                     TelemetryLogSection,
-                    $"Resource {pair.Key}, Pass = {pair.Value.Pass}",
+                    FormattableString.Invariant($"Resource {pair.Key}, Pass = {pair.Value.Pass}"),
                     pair.Value.Details.Where(d => !d.Pass).Select(detail => $"[{detail.RuleName}] {detail.Message}, path = {detail.Path}"));
             }
 

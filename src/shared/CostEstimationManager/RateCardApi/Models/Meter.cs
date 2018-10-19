@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.Azure.CCME.Assessment.Managers.Extensions;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi.Models
 {
@@ -21,5 +22,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RateCardApi.Models
         public string MeterRegion { get; set; }
         public double IncludedQuantity { get; set; }
         public string MeterStatus { get; set; }
+
+        public string CrossEnvironmentId => this.GetCrossEnvironmentId();
     }
 }

@@ -19,84 +19,11 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.DAL
 
         public static void InitDatabase() => Database.SetInitializer(new AssessmentDbContext.Initializer());
 
-        public static UserTokenCache GetUserTokenCache(
-            string tenantId,
-            string userObjectId)
-        {
-            using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
-            {
-                return db.UserTokenCaches
-                    .FirstOrDefault(
-                        c => c.DeploymentId.Equals(DeploymentId)
-                            && c.UserObjectId.Equals(userObjectId)
-                            && c.TenantId.Equals(tenantId));
-            }
-        }
-
-        public static UserTokenCache GetNewVersionUserTokenCache(
-            string tenantId,
-            string userObjectId,
-            DateTime localCacheTime)
-        {
-            using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
-            {
-                return db.UserTokenCaches
-                    .FirstOrDefault(
-                         c => c.DeploymentId.Equals(DeploymentId)
-                            && c.UserObjectId.Equals(userObjectId)
-                            && c.TenantId.Equals(tenantId)
-                            && c.LastModifedTime > localCacheTime);
-            }
-        }
-
-        public static void UpdateUserTokenCache(UserTokenCache cache)
-        {
-            using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
-            {
-                cache.DeploymentId = DeploymentId;
-                db.Entry(cache).State =
-                    cache.Id == 0 ? EntityState.Added : EntityState.Modified;
-                db.SaveChanges();
-            }
-        }
-
-        public static void ClearUserTokenCache()
-        {
-            using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
-            {
-                foreach (var cache in db.UserTokenCaches.Where(c => c.DeploymentId.Equals(DeploymentId)))
-                {
-                    db.UserTokenCaches.Remove(cache);
-                }
-
-                db.SaveChanges();
-            }
-        }
-
-        public static void RemoveUserTokenCache(
-            string tenantId,
-            string userObjectId)
-        {
-            using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
-            {
-                var cache = db.UserTokenCaches
-                    .FirstOrDefault(
-                         c => c.DeploymentId.Equals(DeploymentId)
-                            && c.UserObjectId.Equals(userObjectId)
-                            && c.TenantId.Equals(tenantId));
-
-                if (cache != null)
-                {
-                    db.UserTokenCaches.Remove(cache);
-                    db.SaveChanges();
-                }
-            }
-        }
-
         public static int CreateNewTask(
             string tenantId,
             string userObjectId,
             string subscriptionId,
+            string subscriptionName,
             string targetRegion)
         {
             using (var db = new AssessmentDbContext(ConfigHelper.DatabaseConnectionString))
@@ -107,6 +34,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.DAL
                     TenantId = tenantId,
                     UserObjectId = userObjectId,
                     SubscriptionId = subscriptionId,
+                    SubscriptionName = subscriptionName,
                     TargetRegion = targetRegion,
                     Status = AssessmentTask.TaskStatus.NotStarted,
                     CreatedTime = DateTime.UtcNow

@@ -33,7 +33,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             ServiceParityResult serviceParityResult,
             CostEstimationResult costEstimationResult)
         {
-            string reportFilePath =
+            var reportFilePath =
                 await this.CreateReportAsync(
                     serviceParityResult,
                     costEstimationResult);
@@ -48,51 +48,50 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             ServiceParityResult parityResult,
             CostEstimationResult costEstimationResult)
         {
-            string targetRegion = costEstimationResult.TargetRegion;
+            var targetRegion = costEstimationResult.TargetRegion;
 
-            RegionInfo regionInfo = await GetRegionInfoAsync(targetRegion);
+            var regionInfo = await GetRegionInfoAsync(targetRegion);
 
             // Create a MigraDoc document and initialize the page setting
-            DocumentInfo documentInfo = new DocumentInfo();
+            var documentInfo = new DocumentInfo();
 
-            //Introduction Section
-            Section introSection = documentInfo.CreateIntroSection();
+            // Introduction Section
+            var introSection = documentInfo.CreateIntroSection();
 
-            //Migration Summary Section
+            // Migration Summary Section
             CreateMigrationSummarySection(
                 ref documentInfo,
                 regionInfo,
                 costEstimationResult,
                 parityResult);
 
-            //Service Parity Result
+            // Service Parity Result
             CreateAppendixServiceParityResultSection(
                 ref documentInfo,
                 parityResult,
                 costEstimationResult);
 
-            bool needCostEstimation = !costEstimationResult.Details.All(d => d.EstimatedCost == null);
-            
             // TODO: extract common parameters for creating section
+            var needCostEstimation = !costEstimationResult.Details.All(d => d.EstimatedCost == null) || costEstimationResult.HasError;
             if (needCostEstimation)
             {
-                //Cost Estimation Section
+                // Cost Estimation Section
                 CreateCostEstimationSection(
                     ref documentInfo,
                     regionInfo,
                     costEstimationResult);
             }
 
-            //Appendix Full Resource List
+            // Appendix Full Resource List
             CreateAppendixResouceListSection(
                 ref documentInfo,
                 regionInfo,
                 costEstimationResult);
 
-            //Conclusion Section
+            // Conclusion Section
             documentInfo.CreateConclusionSection();
 
-            //Making TOC
+            // Making TOC
             AppendTOCToIntroductionSection(
                 ref introSection,
                 costEstimationResult.SubscriptionName,
@@ -109,14 +108,15 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             // TODO: move hard code string to resource file.
             introSection.AddParagraph("TABLE OF CONTENT", DocumentInfo.SubTitleStyleName);
 
-            AddTOCParagraph(ref introSection, $"Assessment Summary for {subscriptionName}\t", $"MigrationSummary{subscriptionName}");
-            AddTOCParagraph(ref introSection, $"Service Parity\t", "ServiceParity");
+            AddTOCParagraph(ref introSection, FormattableString.Invariant($"Assessment Summary for {subscriptionName}\t"), FormattableString.Invariant($"MigrationSummary{subscriptionName}"));
+            AddTOCParagraph(ref introSection, "Service Parity\t", "ServiceParity");
             if (needCostEstimation)
             {
-                AddTOCParagraph(ref introSection, $"Cost Estimation\t", $"CostEstimation{subscriptionName}");
+                AddTOCParagraph(ref introSection, $"Cost Estimation\t", FormattableString.Invariant($"CostEstimation{subscriptionName}"));
             }
-            AddTOCParagraph(ref introSection, $"Full Resource List\t", $"AppendixResourceList{subscriptionName}");
-            AddTOCParagraph(ref introSection, $"Conclusion\t", "Conclusion");
+
+            AddTOCParagraph(ref introSection, "Full Resource List\t", FormattableString.Invariant($"AppendixResourceList{subscriptionName}"));
+            AddTOCParagraph(ref introSection, "Conclusion\t", "Conclusion");
         }
 
         private static void AddTOCParagraph(ref Section section, string txt, string mark)
@@ -137,18 +137,21 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
         {
             // TODO: extract to extension method
             // TODO: move hard code string to resource file.
-            string subscriptionName = costEstimationResult.SubscriptionName;
+            var subscriptionName = costEstimationResult.SubscriptionName;
 
-            Section appendixResouceListSection = documentInfo.CreateSection();
+            var appendixResouceListSection = documentInfo.CreateSection();
             var appendixResourceListTitle =
-                appendixResouceListSection.AddParagraph("Full Resource List For " + subscriptionName,
-                DocumentInfo.TitleStyleName);
+                appendixResouceListSection.AddParagraph(
+                    "Full Resource List For " + subscriptionName,
+                    DocumentInfo.TitleStyleName);
             appendixResourceListTitle.AddBookmark("AppendixResourceList" + subscriptionName);
 
-            //Resource List by Resource Group
+            // Resource List by Resource Group
             appendixResouceListSection.AddParagraph(
                 "Here is the full resource list in reference subscription related to this migration: ",
                 DocumentInfo.TableDesStyleName);
+
+            var locationMap = costEstimationResult.LocationMap[costEstimationResult.SubscriptionId];
 
             foreach (var kvp in costEstimationResult.DetailsByResourceGroup)
             {
@@ -174,10 +177,17 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     var resourceRow = resourceTable.AddRow();
                     documentInfo.AddParagraphWordWrap(resourceRow.Cells[0], detail.ResourceName);
                     documentInfo.AddParagraphWordWrap(resourceRow.Cells[1], detail.ResourceType);
-                    documentInfo.AddParagraphWordWrap(resourceRow.Cells[2], detail.Location);
+                    if (locationMap.TryGetValue(detail.Location, out var locationDisplayName))
+                    {
+                        documentInfo.AddParagraphWordWrap(resourceRow.Cells[2], locationDisplayName);
+                    }
+                    else
+                    {
+                        documentInfo.AddParagraphWordWrap(resourceRow.Cells[2], detail.Location);
+                    }
                 }
 
-                appendixResouceListSection.AddParagraph("");
+                appendixResouceListSection.AddParagraph(string.Empty);
             }
 
             return appendixResouceListSection;
@@ -190,17 +200,26 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
         {
             // TODO: extract to extension method
             // TODO: move hard code string to resource file.
-            string subscriptionName = costEstimationResult.SubscriptionName;
+            var subscriptionName = costEstimationResult.SubscriptionName;
 
-            Section costEstimationSection = documentInfo.CreateSection();
+            var costEstimationSection = documentInfo.CreateSection();
             var costTitle = costEstimationSection.AddParagraph("Cost Estimation", DocumentInfo.TitleStyleName);
             costTitle.AddBookmark("CostEstimation" + subscriptionName);
+
+            if (costEstimationResult.HasError)
+            {
+                costEstimationSection.AddParagraph(
+                    "Failed to retrieve Azure resource usage to build the cost estimation due to insufficient permission. Please check your Azure RBAC role and ensure you have any of the role below for the whole subscription: Reader, Contributor and Owner.",
+                    DocumentInfo.TableDesStyleName);
+
+                return costEstimationSection;
+            }
 
             costEstimationSection.AddParagraph(
                 "To best help customer plan and estimate the cost in destination environment, China Cloud Migration & Expansion tool set takes customer’s source service usage of one billing cycle as a reference to perform a cost estimation for the same service usage in the destination. Below is the cost estimation summary report. Please note that the cost only reflects the services that is available in destination environment. For services that is not available in destination, N/A are marked.",
                 DocumentInfo.TableDesStyleName);
 
-            //Make Cost Summary Table
+            // Make Cost Summary Table
             var costSummaryTalbe = DocumentInfo.CreateTable(ref costEstimationSection);
             var headCostSummaryColumn = costSummaryTalbe.AddColumn("8cm");
             headCostSummaryColumn.Format.Font.Bold = true;
@@ -220,7 +239,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             costSummaryRow = costSummaryTalbe.AddRow();
             costSummaryRow.Cells[0].AddParagraph("Usage Collection Period");
-            costSummaryRow.Cells[1].AddParagraph($"{costEstimationResult.StartTime:r} - {costEstimationResult.EndTime:r}");
+            costSummaryRow.Cells[1].AddParagraph(FormattableString.Invariant($"{costEstimationResult.StartTime:r} - {costEstimationResult.EndTime:r}"));
 
             costSummaryRow = costSummaryTalbe.AddRow();
             costSummaryRow.Cells[0].AddParagraph("Target Price Base");
@@ -247,8 +266,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     "Please check the below cost list with price by Resource Group:",
                     DocumentInfo.TableDesStyleName);
 
-                //Resource Details
-
+                // Resource Details
                 decimal totalCost = 0;
                 decimal totalOriginalCost = 0;
                 foreach (var kvp in costEstimationResult.DetailsByResourceGroup)
@@ -258,17 +276,17 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                         continue;
                     }
 
-                    string resourceGroup = kvp.Key;
-                    Table costTable = DocumentInfo.CreateTable(ref costEstimationSection);
-                    costEstimationSection.AddParagraph("");
+                    var resourceGroup = kvp.Key;
+                    var costTable = DocumentInfo.CreateTable(ref costEstimationSection);
+                    costEstimationSection.AddParagraph(string.Empty);
                     AddCostTableHeaders(ref costTable, documentInfo, resourceGroup);
-                    foreach (CostEstimationDetail detail in kvp.Value.Where(d => d.EstimatedCost.HasValue))
+                    foreach (var detail in kvp.Value.Where(d => d.EstimatedCost.HasValue))
                     {
                         AddCostTableRow(ref costTable, documentInfo, regionInfo, detail);
                         totalCost += detail.EstimatedCost.Value;
                     }
 
-                    foreach (CostEstimationDetail detail in kvp.Value.Where(d => !d.EstimatedCost.HasValue))
+                    foreach (var detail in kvp.Value.Where(d => !d.EstimatedCost.HasValue))
                     {
                         AddCostTableRow(ref costTable, documentInfo, regionInfo, detail).Cells[0].Format.Font.Color = Colors.Red;
 
@@ -300,13 +318,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             costTable.AddColumn("2cm").Format.Alignment = ParagraphAlignment.Right;
             costTable.AddColumn("2cm").Format.Alignment = ParagraphAlignment.Right;
 
-            Row costResourceGroup = costTable.AddRow();
+            var costResourceGroup = costTable.AddRow();
             costResourceGroup.Cells[0].AddParagraph("Resource Group Name");
             costResourceGroup.Cells[0].Format.Font.Bold = true;
             costResourceGroup.Cells[1].MergeRight = 3;
             documentInfo.AddParagraphWordWrap(costResourceGroup.Cells[1], tableName);
 
-            Row costProperties = costTable.AddRow();
+            var costProperties = costTable.AddRow();
             costProperties.Format.Font.Bold = true;
             costProperties.Cells[0].AddParagraph("Name");
             costProperties.Cells[1].AddParagraph("Category");
@@ -331,10 +349,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             {
                 catergoryName += " - " + costEstimationDetail.MeterSubCategory;
             }
+
             allupTableCostItem.Cells[1].AddParagraph(catergoryName ?? "N/A");
 
             allupTableCostItem.Cells[2].AddParagraph(costEstimationDetail?.MeterName ?? "N/A");
-            string quantity = costEstimationDetail.UsagesQuantity?.ToString("0.####", CultureInfo.InvariantCulture);
+            var quantity = costEstimationDetail.UsagesQuantity?.ToString("0.####", CultureInfo.InvariantCulture);
             allupTableCostItem.Cells[3].AddParagraph(quantity ?? "N/A");
             allupTableCostItem.Cells[4].AddParagraph(
                 ToCurrencyString(costEstimationDetail.EstimatedCost, regionInfo.CurrencySymbol));
@@ -356,13 +375,12 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             ServiceParityResult serviceParityResult)
         {
             // TODO: extract to extension method
-            // TODO: move hard code string to resource file.
+            // TODO: move hard code string to resource file
+            var subscriptionName = costEstimationResult.SubscriptionName;
+            var resourceGroupsCount = costEstimationResult.ResourceGroupsCount;
+            var resourcesCount = costEstimationResult.ResourcesCount;
 
-            string subscriptionName = costEstimationResult.SubscriptionName;
-            int resourceGroupsCount = costEstimationResult.ResourceGroupsCount;
-            int resourcesCount = costEstimationResult.ResourcesCount;
-
-            Section migrationSummarySection = documentInfo.CreateSection();
+            var migrationSummarySection = documentInfo.CreateSection();
             var summaryTitle =
                 migrationSummarySection.AddParagraph(
                     "Assessment Summary for " + subscriptionName,
@@ -393,18 +411,18 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             shortSummaryRow = shortSummary.AddRow();
             shortSummaryRow.Cells[0].AddParagraph("Number of Resource Group");
-            shortSummaryRow.Cells[1].AddParagraph(resourceGroupsCount.ToString());
+            shortSummaryRow.Cells[1].AddParagraph(resourceGroupsCount.ToString(CultureInfo.InvariantCulture));
 
             shortSummaryRow = shortSummary.AddRow();
             shortSummaryRow.Cells[0].AddParagraph("Number of Resources");
-            shortSummaryRow.Cells[1].AddParagraph(resourcesCount.ToString());
+            shortSummaryRow.Cells[1].AddParagraph(resourcesCount.ToString(CultureInfo.InvariantCulture));
 
             shortSummaryRow = shortSummary.AddRow();
             shortSummaryRow.Cells[0].AddParagraph("Number of Resources Failed in Parity Rule Check/Number of All Resources");
 
             var detailPassFailed = serviceParityResult.Details.Where(d => !d.Value.Pass);
             var resourceNotPassedCount = costEstimationResult.Details.Where(c => detailPassFailed.Any(d => d.Key == c.ResourceId)).Distinct().Count();
-            shortSummaryRow.Cells[1].AddParagraph($"{resourceNotPassedCount}/{resourcesCount}");
+            shortSummaryRow.Cells[1].AddParagraph(FormattableString.Invariant($"{resourceNotPassedCount}/{resourcesCount}"));
 
             shortSummaryRow = shortSummary.AddRow();
             shortSummaryRow.Cells[0].AddParagraph("Target Region");
@@ -420,7 +438,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
         {
             // TODO: extract to extension method
             // TODO: move hard code string to resource file
-            Section appendixServiceParityResultSection = documentInfo.CreateSection();
+            var appendixServiceParityResultSection = documentInfo.CreateSection();
             var appendixServiceParityResultTitle =
                 appendixServiceParityResultSection.AddParagraph("Service Parity", DocumentInfo.TitleStyleName);
             appendixServiceParityResultTitle.AddBookmark("ServiceParity");
@@ -446,12 +464,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     // ResourceGroup.Key is the name of the group
                     if (resourceGroup.Value.Where(r => detailsAll.Keys.Contains(r.ResourceId)).Count() != 0)
                     {
-                        string resourceGroupName = resourceGroup.Key;
+                        var resourceGroupName = resourceGroup.Key;
                         var groupNameTxt = appendixServiceParityResultSection.AddParagraph(
                             "Resource Group: " + resourceGroupName,
                             DocumentInfo.TableDesStyleName);
                     }
-                    Table parityTable = DocumentInfo.CreateTable(ref appendixServiceParityResultSection);
+
+                    var parityTable = DocumentInfo.CreateTable(ref appendixServiceParityResultSection);
                     parityTable.AddColumn("4cm"); // Rule name
                     parityTable.AddColumn("2cm"); // Pass
                     parityTable.AddColumn("12cm"); // Message
@@ -475,9 +494,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                             parityResourceID.Cells[0].Format.Font.Bold = true;
                             parityResourceID.Cells[1].MergeRight = 1;
                             parityResourceID.Cells[1].Column.Width = "14.5cm";
-                            string cutMark = "providers";
-                            int cut = resource.ResourceId.IndexOf(cutMark) + cutMark.Length;
-                            string resourceID = cut == -1 ? resource.ResourceId : resource.ResourceId.Substring(cut, resource.ResourceId.Length - cut);
+                            var cutMark = "providers";
+                            var cut = resource.ResourceId.IndexOf(cutMark, StringComparison.OrdinalIgnoreCase) + cutMark.Length;
+                            var resourceID = cut == -1 ? resource.ResourceId : resource.ResourceId.Substring(cut, resource.ResourceId.Length - cut);
                             documentInfo.AddParagraphWordWrap(parityResourceID.Cells[1], resourceID);
 
                             var parityProperties = parityTable.AddRow();
@@ -493,7 +512,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                             {
                                 var ruleCheckRow = parityTable.AddRow();
                                 documentInfo.AddParagraphWordWrap(ruleCheckRow.Cells[0], ruleCheck.Brief);
-                                documentInfo.AddParagraphWordWrap(ruleCheckRow.Cells[1], ("N"));
+                                documentInfo.AddParagraphWordWrap(ruleCheckRow.Cells[1], "N");
                                 documentInfo.AddParagraphWordWrap(ruleCheckRow.Cells[2], ruleCheck.Message);
                             }
                         }
@@ -510,8 +529,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             string currencyUnit;
             string targetRegionName;
             CultureInfo currencyCulture;
-            bool isChinaRegion = false;
-            switch (targetRegion.ToLower())
+            var isChinaRegion = false;
+            switch (targetRegion.ToLowerInvariant())
             {
                 case "chinanorth":
                 case "chinaeast":
@@ -534,12 +553,12 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     throw new ArgumentOutOfRangeException(nameof(targetRegion), targetRegion, null);
             }
 
-            string currencySymbol = currencyCulture.NumberFormat.CurrencySymbol;
+            var currencySymbol = currencyCulture.NumberFormat.CurrencySymbol;
 
             List<string> targetResoureTypes;
-            using (WebClient wc = new WebClient { Encoding = Encoding.UTF8 })
+            using (var wc = new WebClient { Encoding = Encoding.UTF8 })
             {
-                string resourceTypeContent =
+                var resourceTypeContent =
                     await wc.DownloadStringTaskAsync(resourceTypeUrl);
                 targetResoureTypes = JsonConvert.DeserializeObject<List<string>>(resourceTypeContent);
             }
@@ -606,7 +625,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             public DocumentInfo()
             {
-                Document document = new Document { UseCmykColor = true };
+                var document = new Document { UseCmykColor = true };
                 document.DefaultPageSetup.HeaderDistance = Unit.FromCentimeter(0.8);
                 document.DefaultPageSetup.LeftMargin = Unit.FromCentimeter(1.5);
                 document.DefaultPageSetup.RightMargin = Unit.FromCentimeter(1.5);
@@ -615,24 +634,24 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
                 this.Document = document;
 
-                //Setup Global Style
-                Style titleStyle = document.Styles.AddStyle(TitleStyleName, "Normal");
+                // Setup Global Style
+                var titleStyle = document.Styles.AddStyle(TitleStyleName, "Normal");
                 titleStyle.Font = TitleFont.Clone();
                 titleStyle.ParagraphFormat.SpaceAfter = 15;
 
-                Style subTitleStyle = document.Styles.AddStyle(SubTitleStyleName, "Normal");
+                var subTitleStyle = document.Styles.AddStyle(SubTitleStyleName, "Normal");
                 subTitleStyle.Font = TitleFont.Clone();
                 subTitleStyle.Font.Size = 16;
                 subTitleStyle.Font.Bold = false;
                 subTitleStyle.ParagraphFormat.SpaceBefore = 20;
                 subTitleStyle.ParagraphFormat.SpaceAfter = 15;
 
-                Style contentStyle = document.Styles.AddStyle(ContentStyleName, "Normal");
+                var contentStyle = document.Styles.AddStyle(ContentStyleName, "Normal");
                 contentStyle.Font = ContentFont.Clone();
                 contentStyle.ParagraphFormat.LineSpacing = 4;
                 contentStyle.ParagraphFormat.SpaceBefore = 5;
 
-                Style tableStyle = document.Styles.AddStyle(TableStyleName, "Normal");
+                var tableStyle = document.Styles.AddStyle(TableStyleName, "Normal");
                 tableStyle.Font = ContentFont.Clone();
                 tableStyle.Font.Color = Colors.Black;
                 tableStyle.Font.Size = 10;
@@ -642,20 +661,20 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 // TODO: change to static read-only field
                 this.TableMeasureFront = new XFont(tableStyle.Font.Name, tableStyle.Font.Size);
 
-                Style tableDesStyle = document.Styles.AddStyle(TableDesStyleName, "Normal");
+                var tableDesStyle = document.Styles.AddStyle(TableDesStyleName, "Normal");
                 tableDesStyle.Font = ContentFont.Clone();
                 tableDesStyle.ParagraphFormat.LineSpacing = 4;
                 tableDesStyle.ParagraphFormat.SpaceBefore = 5;
                 tableDesStyle.ParagraphFormat.SpaceAfter = 10;
 
-                Style bulletStyle = document.Styles.AddStyle(BulletStyleName, "Normal");
+                var bulletStyle = document.Styles.AddStyle(BulletStyleName, "Normal");
                 bulletStyle.Font = ContentFont.Clone();
                 bulletStyle.ParagraphFormat.LineSpacing = 4;
                 bulletStyle.ParagraphFormat.LeftIndent = 20;
                 bulletStyle.ParagraphFormat.SpaceBefore = 15;
                 bulletStyle.ParagraphFormat.SpaceAfter = 10;
 
-                Style tocStyle = document.Styles.AddStyle(TocStyleName, "Normal");
+                var tocStyle = document.Styles.AddStyle(TocStyleName, "Normal");
                 tocStyle.Font = ContentFont.Clone();
                 tocStyle.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right, TabLeader.Dots);
                 tocStyle.ParagraphFormat.SpaceAfter = 15;
@@ -674,22 +693,22 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 {
                     Color = Colors.Gray,
                     Width = 0.25,
-                    Left = {Width = 0.5},
-                    Right = {Width = 0.5}
+                    Left = { Width = 0.5 },
+                    Right = { Width = 0.5 }
                 },
                     LeftPadding = 3,
                     RightPadding = 3,
                     Rows =
-                {
-                    LeftIndent = 0,
-                    VerticalAlignment = VerticalAlignment.Center
-                },
+                    {
+                        LeftIndent = 0,
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
                     Format =
-                {
-                    Alignment = ParagraphAlignment.Left,
-                    LeftIndent = 0,
-                    RightIndent = 0
-                }
+                    {
+                        Alignment = ParagraphAlignment.Left,
+                        LeftIndent = 0,
+                        RightIndent = 0
+                    }
                 };
 
                 section?.Add(table);
@@ -703,8 +722,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 {
                     text = string.Empty;
                 }
-                XSize size = GraphicsMeasure.MeasureString(text, this.TableMeasureFront);
-                Column column = cell.Column;
+
+                var size = GraphicsMeasure.MeasureString(text, this.TableMeasureFront);
+                var column = cell.Column;
 
                 // We use padding properties from Table instead of Column because the ones from Column
                 // are 0 even there is a small default padding
@@ -715,11 +735,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     var words = text.Split(Whitespaces, StringSplitOptions.RemoveEmptyEntries);
                     if (words.Length > 1)
                     {
-                        bool isSplit = false;
+                        var isSplit = false;
                         var processed = new List<string>();
-                        foreach (string word in words)
+                        foreach (var word in words)
                         {
-                            string fit = this.SplitTextWithHyphen(word, maxWidth);
+                            var fit = this.SplitTextWithHyphen(word, maxWidth);
                             if (!ReferenceEquals(fit, word))
                             {
                                 processed.Add(fit);
@@ -745,12 +765,12 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             {
                 const string LogoPath = "Images\\logo.png";
 
-                Section section = this.Document.AddSection();
+                var section = this.Document.AddSection();
 
-                //setup header
+                // Setup header
                 if (File.Exists(LogoPath))
                 {
-                    Image image = section.Headers.Primary.AddImage(LogoPath);
+                    var image = section.Headers.Primary.AddImage(LogoPath);
                     image.Height = Unit.FromCentimeter(1.5);
                     image.LockAspectRatio = true;
                     image.RelativeVertical = RelativeVertical.Line;
@@ -760,8 +780,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     image.WrapFormat.Style = WrapStyle.TopBottom;
                 }
 
-                //setup footer
-                Paragraph footer = section.Footers.Primary.AddParagraph();
+                // Setup footer
+                var footer = section.Footers.Primary.AddParagraph();
                 footer.AddPageField();
                 footer.Format.Alignment = ParagraphAlignment.Right;
 
@@ -770,15 +790,16 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             public Section CreateIntroSection()
             {
-                Section introSection = this.CreateSection();
-                //Introduction Title
+                var introSection = this.CreateSection();
+
+                // Introduction Title
                 introSection.AddParagraph(PdfReportMessages.IntroductionTitle, TitleStyleName);
 
-                //Introduction Content
+                // Introduction Content
                 introSection.AddParagraph(PdfReportMessages.IntroductionContent_P1, ContentStyleName);
                 introSection.AddParagraph(PdfReportMessages.IntroductionContent_P2, ContentStyleName);
 
-                Paragraph introBullets = introSection.AddParagraph();
+                var introBullets = introSection.AddParagraph();
                 introBullets.Style = BulletStyleName;
                 introBullets.AddFormattedText(PdfReportMessages.IntroductionContent_ListItem1);
                 introBullets.AddLineBreak();
@@ -791,9 +812,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             public Section CreateConclusionSection()
             {
-                // TODO: move hard code string to resource file.
-
-                Section conclusionSection = this.CreateSection();
+                // TODO: move hard code string to resource file
+                var conclusionSection = this.CreateSection();
                 var conclusionTitle = conclusionSection.AddParagraph("Conclusion", TitleStyleName);
                 conclusionTitle.AddBookmark("Conclusion");
                 conclusionSection.AddParagraph(
@@ -805,23 +825,24 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             public string MakePDF()
             {
-                PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer();
-                //Generate PDF file
-
-                // Associate the MigraDoc document with a renderer
-                pdfRenderer.Document = this.Document;
+                // Generate PDF file
+                var pdfRenderer = new PdfDocumentRenderer
+                {
+                    // Associate the MigraDoc document with a renderer
+                    Document = this.Document
+                };
 
                 // Layout and render document to PDF
                 pdfRenderer.RenderDocument();
 
                 // Save the document...
-                string filename = "CCMEAssessmentReport" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pdf";
-                string path = Path.Combine(Path.GetTempPath(), filename);
+                var filename = "CCMEAssessmentReport" + DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + ".pdf";
+                var path = Path.Combine(Path.GetTempPath(), filename);
 
-                // TODO: upload pdf file to storage account.
+                // TODO: upload PDF file to storage account.
                 pdfRenderer.PdfDocument.Save(path);
 
-                Debug.WriteLine($"Save pdf document to: {path}");
+                Debug.WriteLine(FormattableString.Invariant($"Save PDF document to: {path}"));
 
                 return path;
             }
@@ -839,11 +860,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     return this.EnsureFit(word, maxWidth);
                 }
 
-                bool isSplite = false;
+                var isSplite = false;
                 var processed = new List<string>();
-                foreach (string part in parts)
+                foreach (var part in parts)
                 {
-                    string fit = this.EnsureFit(part, maxWidth);
+                    var fit = this.EnsureFit(part, maxWidth);
                     if (!ReferenceEquals(fit, part))
                     {
                         processed.Add(fit);
@@ -856,15 +877,15 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             private string EnsureFit(string word, Unit maxWidth)
             {
-                int length = word.Length;
+                var length = word.Length;
                 if (length < 2 || GraphicsMeasure.MeasureString(word, this.TableMeasureFront).Width <= maxWidth)
                 {
                     return word;
                 }
 
-                int splitIndex = length / 2;
-                int candidate1 = word.IndexOfAny(Separators, splitIndex);
-                int candidate2 = word.LastIndexOfAny(Separators, splitIndex);
+                var splitIndex = length / 2;
+                var candidate1 = word.IndexOfAny(Separators, splitIndex);
+                var candidate2 = word.LastIndexOfAny(Separators, splitIndex);
                 if (candidate1 >= splitIndex && candidate1 < length - 1 &&
                    candidate1 - splitIndex < splitIndex - candidate2)
                 {
@@ -875,8 +896,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     splitIndex = candidate2 + 1;
                 }
 
-                string firstHalf = this.EnsureFit(word.Substring(0, splitIndex), maxWidth);
-                string secondHalf = this.EnsureFit(word.Substring(splitIndex), maxWidth);
+                var firstHalf = this.EnsureFit(word.Substring(0, splitIndex), maxWidth);
+                var secondHalf = this.EnsureFit(word.Substring(splitIndex), maxWidth);
                 return string.Join("\n", firstHalf, secondHalf);
             }
         }

@@ -10,15 +10,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Azure.CCME.Assessment.Models;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
-using Microsoft.Azure.CCME.Assessment.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
 {
-    internal sealed class ResourceHelper : IResourceHelper
+    internal sealed class ResourceHelper : IResourceHelper, IDisposable
     {
         private static readonly Regex OfficialApiVersionRegex = new Regex(@"^\d{4}-\d{2}-\d{2}$");
         private static readonly JsonSerializer IgnoreNullSerializer = new JsonSerializer
@@ -26,14 +26,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        private readonly IFactory factory;
-        private readonly string subscriptionId;
+        private readonly IResourceManagementClient client;
         private Dictionary<string, string> apiVersionMapping;
 
         public ResourceHelper(IFactory factory, string subscriptionId)
         {
-            this.factory = factory;
-            this.subscriptionId = subscriptionId;
+            this.client = factory.CreateResourceManagementClient();
+            this.client.SubscriptionId = subscriptionId;
         }
 
         public async Task<IEnumerable<ResourceModel>> GetResourcesAsync(
@@ -48,83 +47,78 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
                 this.apiVersionMapping = await this.GetApiVersionAsync();
             }
 
-            using (var client = this.factory.CreateResourceManagementClient())
+            IEnumerable<GenericResourceInner> resources;
+            try
             {
-                client.SubscriptionId = this.subscriptionId;
+                var firstPage = await this.client.Resources.ListByResourceGroupAsync(resourceGroupName);
+                resources = await firstPage.GetAllAsync(async (page) => await this.client.Resources.ListByResourceGroupNextAsync(page.NextPageLink));
+            }
+            catch (Exception ex)
+            {
+                throw new AssessmentException($"Failed to list resources in resource group {resourceGroupName} of subscription {this.client.SubscriptionId}", ex);
+            }
 
-                IEnumerable<GenericResourceInner> resources;
-                try
+            foreach (var resource in resources)
+            {
+                if (prefetchedResources.TryGetValue(resource.Id, out var prefetchedResource))
                 {
-                    var firstPage = await client.Resources.ListByResourceGroupAsync(resourceGroupName);
-                    resources = await firstPage.GetAllAsync(async (page) => await client.Resources.ListByResourceGroupNextAsync(page.NextPageLink));
+                    results.Add(prefetchedResource);
+                    continue;
                 }
-                catch (Exception ex)
-                {
-                    throw new AssessmentException($"Failed to list resources in resource group {resourceGroupName} of subscription {this.subscriptionId}", ex);
-                }
 
-                foreach (var resource in resources)
+                if (detailedResourceTypes == null || detailedResourceTypes.Contains(resource.Type, StringComparer.OrdinalIgnoreCase))
                 {
-                    if (prefetchedResources.TryGetValue(resource.Id, out var prefetchedResource))
+                    try
                     {
-                        results.Add(prefetchedResource);
-                        continue;
-                    }
-
-                    if (detailedResourceTypes == null || detailedResourceTypes.Contains(resource.Type, StringComparer.InvariantCultureIgnoreCase))
-                    {
-                        try
+                        var resourceId = resource.Id;
+                        if (resourceId.Contains("#"))
                         {
-                            var resourceId = resource.Id;
-                            if (resourceId.Contains("#"))
-                            {
-                                resourceId = resourceId.Replace("#", "%23");
-                            }
+                            resourceId = resourceId.Replace("#", "%23");
+                        }
 
-                            var apiVersion = this.apiVersionMapping[resource.Type];
+                        var apiVersion = this.apiVersionMapping[resource.Type];
 
-                            JToken details;
-                            if (apiVersion == null)
+                        JToken details;
+                        if (apiVersion == null)
+                        {
+                            details = JObject.FromObject(new
                             {
-                                details = JObject.FromObject(new
-                                {
-                                    type = resource.Type,
-                                    location = resource.Location
-                                });
-                            }
-                            else
-                            {
-                                var genericResource = await client.Resources.GetByIdAsync(resource.Id, apiVersion);
-
-                                details = JObject.FromObject(genericResource, IgnoreNullSerializer);
-                                details["apiVersion"] = new JValue(apiVersion);
-                            }
-
-                            results.Add(new ResourceModel
-                            {
-                                Id = resource.Id,
-                                Details = details
+                                type = resource.Type,
+                                location = resource.Location
                             });
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Trace.TraceError($"Exception raised while getting detail of resource {resource.Id}: {ex}");
-                            results.Add(new ResourceModel
-                            {
-                                Id = resource.Id,
-                                Exception = ex
-                            });
+                            var genericResource = await this.client.Resources.GetByIdAsync(resource.Id, apiVersion);
+
+                            details = JObject.FromObject(genericResource, IgnoreNullSerializer);
+                            details["apiVersion"] = new JValue(apiVersion);
                         }
-                    }
-                    else
-                    {
-                        var obj = JObject.FromObject(resource, IgnoreNullSerializer);
+
                         results.Add(new ResourceModel
                         {
                             Id = resource.Id,
-                            Details = obj
+                            Details = details
                         });
                     }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError(FormattableString.Invariant($"Exception raised while getting detail of resource {resource.Id}: {ex}"));
+                        results.Add(new ResourceModel
+                        {
+                            Id = resource.Id,
+                            Exception = ex
+                        });
+                    }
+                }
+                else
+                {
+                    var obj = JObject.FromObject(resource, IgnoreNullSerializer);
+                    results.Add(new ResourceModel
+                    {
+                        Id = resource.Id,
+                        Details = obj
+                    });
                 }
             }
 
@@ -133,26 +127,21 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
 
         private async Task<Dictionary<string, string>> GetApiVersionAsync()
         {
-            using (var client = this.factory.CreateResourceManagementClient())
+            IEnumerable<ProviderInner> providers;
+            try
             {
-                client.SubscriptionId = this.subscriptionId;
-
-                IEnumerable<ProviderInner> providers;
-                try
-                {
-                    var firstPage = await client.Providers.ListAsync();
-                    providers = await firstPage.GetAllAsync(async (page) => await client.Providers.ListNextAsync(page.NextPageLink));
-                }
-                catch (Exception ex)
-                {
-                    throw new AssessmentException($"Failed to get providers for subscription {this.subscriptionId}", ex);
-                }
-
-                return providers
-                    .Select(provider => this.GetApiVersion(provider))
-                    .SelectMany(d => d)
-                    .ToDictionary(p => p.Key, p => p.Value, StringComparer.InvariantCultureIgnoreCase);
+                var firstPage = await this.client.Providers.ListAsync();
+                providers = await firstPage.GetAllAsync(async (page) => await this.client.Providers.ListNextAsync(page.NextPageLink));
             }
+            catch (Exception ex)
+            {
+                throw new AssessmentException($"Failed to get providers for subscription {this.client.SubscriptionId}", ex);
+            }
+
+            return providers
+                .Select(provider => this.GetApiVersion(provider))
+                .SelectMany(d => d)
+                .ToDictionary(p => p.Key, p => p.Value, StringComparer.OrdinalIgnoreCase);
         }
 
         private IEnumerable<KeyValuePair<string, string>> GetApiVersion(ProviderInner provider)
@@ -167,5 +156,27 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.Utils
             return apiVersions.Where(s => OfficialApiVersionRegex.IsMatch(s)).OrderByDescending(s => s).FirstOrDefault()
                 ?? apiVersions.OrderByDescending(s => s).FirstOrDefault();
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    this.client.Dispose();
+                }
+
+                this.disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+        #endregion
     }
 }

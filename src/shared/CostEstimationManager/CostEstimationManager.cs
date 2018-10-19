@@ -13,6 +13,8 @@ using Microsoft.Azure.CCME.Assessment.Environments;
 using Microsoft.Azure.CCME.Assessment.Managers.BillingProviders;
 using Microsoft.Azure.CCME.Assessment.Managers.ListPriceProviders;
 using Microsoft.Azure.CCME.Assessment.Models;
+using Microsoft.Azure.CCME.Assessment.Utilities;
+using Microsoft.Rest.Azure;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers
 {
@@ -42,7 +44,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Estimating cost of {resources.Count()} resources for region: {targetRegion}");
+                FormattableString.Invariant($"Estimating cost of {resources.Count()} resources for region: {targetRegion}"));
 
             DateTime startTime, endTime;
 
@@ -64,46 +66,71 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Retrieving usage of {resources.Count()} resources from {startTime} to {endTime}.");
+                FormattableString.Invariant($"Retrieving usage of {resources.Count()} resources from {startTime} to {endTime}."));
 
             var usages = await this.billingProvider.GetUsagesAsync(subscriptions, startTime, endTime);
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Got {usages.Count()} usages from billing provider:",
-                usages.Select(usage => $"[{usage.MeterId}] [{usage.Quantity}] {usage.ResourceUri}"));
+                FormattableString.Invariant($"Got {usages.Count()} usages from billing provider:"),
+                usages.Select(usage => FormattableString.Invariant($"[{usage.MeterId}] [{usage.Quantity}] {usage.ResourceUri}")));
 
             var listPriceProvider = new RateCardListPriceProvider(this.context);
             var meterIds = new HashSet<string>(usages.Select(u => u.MeterId).Distinct());
 
-            var sourceMeters = (await this.listPriceProvider.GetMetersAsync(subscriptions.Select(m => m.SubscriptionId), meterIds))
-                .ToDictionary(m => m.MeterId, StringComparer.InvariantCultureIgnoreCase);
-            this.context.TelemetryManager.WriteLog(
-                TelemetryLogLevel.Information,
-                TelemetryLogSection,
-                $"Got {sourceMeters.Count()} price meters from source regions:",
-                sourceMeters.Values.Select(meter => $"[{meter.MeterId}] {meter.MeterCategory}/{meter.MeterSubCategory}/{meter.MeterName}"));
+            Dictionary<string, ListPriceMeter> sourceMeters = null;
+            Dictionary<string, ListPriceMeter> targetMeters = null;
+            bool sourceMeterError = false;
 
-            var targetMeters = (await TargetListPriceProvider.GetMetersAsync(targetRegion, sourceMeters.Values))
-                .ToDictionary(m => m.CrossEnvironmentId, StringComparer.InvariantCultureIgnoreCase);
-            this.context.TelemetryManager.WriteLog(
-                TelemetryLogLevel.Information,
-                TelemetryLogSection,
-                $"Got {targetMeters.Count()} price meters from target region:",
-                targetMeters.Values.Select(meter => $"[{meter.MeterId}] {meter.MeterCategory}/{meter.MeterSubCategory}/{meter.MeterName}"));
+            try
+            {
+                sourceMeters = (await this.listPriceProvider.GetMetersAsync(subscriptions.Select(m => m.SubscriptionId), meterIds))
+                  .ToDictionary(m => m.MeterId, StringComparer.OrdinalIgnoreCase);
+                this.context.TelemetryManager.WriteLog(
+                    TelemetryLogLevel.Information,
+                    TelemetryLogSection,
+                    FormattableString.Invariant($"Got {sourceMeters.Count()} price meters from source regions:"),
+                    sourceMeters.Values
+                        .OrderBy(m => m.CrossEnvironmentId)
+                        .Select(meter => FormattableString.Invariant($"[{meter.MeterId}] {meter.CrossEnvironmentId}")));
+            }
+            catch (CloudException ex)
+            {
+                sourceMeterError = true;
+                this.context.TelemetryManager.WriteLog(
+                    TelemetryLogLevel.Error,
+                    TelemetryLogSection,
+                    "Got exception when getting price meters!",
+                    null,
+                    ex);
+            }
 
-            // TODO: Group estimated cost by source subscription
+            if (!sourceMeterError)
+            {
+                var targetListPriceProvider = new TargetListPriceProvider(this.context);
+
+                targetMeters = (await targetListPriceProvider.GetMetersAsync(targetRegion, sourceMeters.Values))
+                    .ToDictionary(m => m.CrossEnvironmentId, StringComparer.OrdinalIgnoreCase);
+                this.context.TelemetryManager.WriteLog(
+                    TelemetryLogLevel.Information,
+                    TelemetryLogSection,
+                    FormattableString.Invariant($"Got {targetMeters.Count()} price meters from target region:"),
+                    targetMeters.Values
+                        .OrderBy(m => m.CrossEnvironmentId)
+                        .Select(meter => FormattableString.Invariant($"[{meter.MeterId}] {meter.CrossEnvironmentId}")));
+            }
+
             var details = resources.SelectMany(resource => this.GetCostEstimationResult(
                 resource,
-                usages.Where(u => u.ResourceUri.Equals(resource.Id, StringComparison.InvariantCultureIgnoreCase)),
+                usages.Where(u => u.ResourceUri.Equals(resource.Id, StringComparison.OrdinalIgnoreCase)),
                 sourceMeters,
                 targetMeters)).ToList();
 
             this.context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Information,
                 TelemetryLogSection,
-                $"Got {details.Count()} cost estimation results:",
-                details.Select(detail => $"[{detail.UsagesQuantity}] [{detail.OriginalCost}] [{detail.EstimatedCost}] {detail.ResourceId} - {detail.MeterCategory}/{detail.MeterSubCategory}/{detail.MeterName}"));
+                FormattableString.Invariant($"Got {details.Count()} cost estimation results:"),
+                details.Select(detail => FormattableString.Invariant($"[{detail.UsagesQuantity}] [{detail.OriginalCost}] [{detail.EstimatedCost}] {detail.ResourceId} - {detail.MeterCategory}/{detail.MeterSubCategory}/{detail.MeterName}")));
 
             return new CostEstimationResult
             {
@@ -111,7 +138,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                 StartTime = startTime,
                 EndTime = endTime,
                 TargetRegion = targetRegion,
-                SubscriptionName = subscriptions.First().SubscriptionName
+                SubscriptionName = subscriptions.First().SubscriptionName,
+                SubscriptionId = subscriptions.First().SubscriptionId,
+                LocationMap = await ResourceLocationHelper.GetLocationMap(
+                    this.context.ARMAccessToken,
+                    this.context.ARMBaseUri,
+                    subscriptions.Select(s => s.SubscriptionId).ToList()),
+                HasError = sourceMeterError
             };
         }
 
@@ -140,7 +173,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                             this.context.TelemetryManager.WriteLog(
                                 TelemetryLogLevel.Warning,
                                 TelemetryLogSection,
-                                $"Unknown target price meter: {sourceMeter.CrossEnvironmentId}");
+                                FormattableString.Invariant($"Unknown target price meter: {sourceMeter.CrossEnvironmentId}"));
                         }
                     }
                     else
@@ -148,7 +181,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                         this.context.TelemetryManager.WriteLog(
                             TelemetryLogLevel.Warning,
                             TelemetryLogSection,
-                            $"Unknown source price meter: {usage.MeterId}");
+                            FormattableString.Invariant($"Unknown source price meter: {usage.MeterId}"));
                     }
                 }
                 else
@@ -156,7 +189,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
                     this.context.TelemetryManager.WriteLog(
                         TelemetryLogLevel.Warning,
                         TelemetryLogSection,
-                        $"Cannot find usage for resource {resource.Id}");
+                        FormattableString.Invariant($"Cannot find usage for resource {resource.Id}"));
                 }
 
                 var resourceId = new ResourceId(resource.Id);

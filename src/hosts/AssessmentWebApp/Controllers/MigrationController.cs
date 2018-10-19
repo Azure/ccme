@@ -11,6 +11,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
 {
     public class MigrationController : BaseController
     {
+        [HttpGet]
         public ActionResult Index()
         {
             TelemetryHelper.LogVerbose(@"MigrationController::Index");

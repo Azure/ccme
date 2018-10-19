@@ -10,11 +10,11 @@ namespace Microsoft.Azure.CCME.Assessment.Services.ServiceFactories
 {
     public class ServiceFactoryBase
     {
-        protected readonly IAssessmentContext context;
+        protected IAssessmentContext Context { get; }
 
         public ServiceFactoryBase(IAssessmentContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
     }
 }

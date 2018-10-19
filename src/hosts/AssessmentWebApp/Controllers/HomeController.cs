@@ -7,9 +7,9 @@
 using System.Web;
 using System.Web.Mvc;
 
-using Microsoft.Azure.CCME.Assessment.Hosts.DAL;
 using Microsoft.Azure.CCME.Assessment.Hosts.Diagnostics;
 using Microsoft.Azure.CCME.Assessment.Hosts.Identity;
+using Microsoft.Azure.CCME.Assessment.Hosts.Tokens;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 
@@ -17,6 +17,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
 {
     public class HomeController : BaseController
     {
+        [HttpGet]
         public ActionResult Index()
         {
             TelemetryHelper.LogVerbose(@"HomeController::Index");
@@ -52,14 +53,10 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
                 UserObjectId = userObjectId
             };
 
+            TokenStore.Instance.RemoveTokenWrapperByUserObjectId(userObjectId);
+
             TelemetryHelper.LogVerbose(
                 @"HomeController::SignOut",
-                telemetryContext);
-
-            DataAccess.RemoveUserTokenCache(tenantId, userObjectId);
-
-            TelemetryHelper.LogVerbose(
-                @"Removed user token cache",
                 telemetryContext);
 
             TelemetryHelper.WriteEvent(
@@ -74,7 +71,8 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Controllers
         /// <summary>
         /// Get link about privacy statement according to regions
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Redirect to the list price URL</returns>
+        [HttpGet]
         public ActionResult PrivacyStatement()
         {
             switch (ConfigHelper.AzureEnvironmentName)

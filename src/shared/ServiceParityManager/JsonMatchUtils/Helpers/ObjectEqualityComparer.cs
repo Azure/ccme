@@ -18,7 +18,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.JsonMatchUtils.Helpers
                     string.Equals(
                     expected as string,
                     captured as string,
-                    ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture);
+                    ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
             }
             else
             {

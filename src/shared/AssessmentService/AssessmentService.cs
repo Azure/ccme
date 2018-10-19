@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Azure.CCME.Assessment.Environments;
+using Microsoft.Azure.CCME.Assessment.Exceptions;
 using Microsoft.Azure.CCME.Assessment.Managers;
 using Microsoft.Azure.CCME.Assessment.Models;
 using Microsoft.Azure.CCME.Assessment.Services.ServiceFactories;
@@ -40,22 +41,31 @@ namespace Microsoft.Azure.CCME.Assessment.Services
             context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Verbose,
                 TelemetryLogSection,
-                $"Got {detailedResourceTypes.Count()} detailed resource types");
+                FormattableString.Invariant($"Got {detailedResourceTypes.Count()} detailed resource types"));
 
-            var subscriptions = await this.GetResourcesAsync(context, detailedResourceTypes);
+            IEnumerable<SubscriptionModel> subscriptions = null;
+            try
+            {
+                subscriptions = await this.GetResourcesAsync(context, detailedResourceTypes);
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceException("Failed to retrieve Azure resource data due to insufficient permission. Please check your Azure RBAC role and ensure you have any of the role below for the whole subscription: Reader, Contributor and Owner.", ex);
+            }
+
             var resources = subscriptions.SelectMany(m => m.ResourceGroups.SelectMany(r => r.Value));
 
             context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Verbose,
                 TelemetryLogSection,
-                $"Got {resources.Count()} resources");
+                FormattableString.Invariant($"Got {resources.Count()} resources"));
 
             var serviceParityResult = serviceParityManager.Process(subscriptions, targetRegion);
 
             context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Verbose,
                 TelemetryLogSection,
-                $"Got service parity pass result: {serviceParityResult.Pass} with {serviceParityResult.Details.Count()} detail items");
+                FormattableString.Invariant($"Got service parity pass result: {serviceParityResult.Pass} with {serviceParityResult.Details.Count()} detail items"));
 
             var costEstimationManager = new CostEstimationManager(
                 context,
@@ -69,7 +79,7 @@ namespace Microsoft.Azure.CCME.Assessment.Services
             context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Verbose,
                 TelemetryLogSection,
-                $"Got cost estimation result for {costEstimationResult.ResourcesCount} resources of {costEstimationResult.ResourceGroupsCount} resource groups");
+                FormattableString.Invariant($"Got cost estimation result for {costEstimationResult.ResourcesCount} resources of {costEstimationResult.ResourceGroupsCount} resource groups"));
 
             var reportManager = new ReportManager(context);
 
@@ -80,7 +90,7 @@ namespace Microsoft.Azure.CCME.Assessment.Services
             context.TelemetryManager.WriteLog(
                 TelemetryLogLevel.Verbose,
                 TelemetryLogSection,
-                $"Generated assessment report in local file: {assessmentReport.ReportFilePath}");
+                FormattableString.Invariant($"Generated assessment report in local file: {assessmentReport.ReportFilePath}"));
 
             return assessmentReport;
         }

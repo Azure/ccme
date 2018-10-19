@@ -3,8 +3,8 @@
 }
 <style type="text/css">
     body {
-        background-color: #00479d;
-        background-image: url(../Resources/imgs/grid_bg.png);
+        background-color: #c4e7ff;
+        background-image: url(../Resources/imgs/bg_cut.png);
     }
 </style>
 <div class="welcome-page">
@@ -24,20 +24,17 @@
         </div>
 
         <h3>Hello Welcome!</h3>
-
         @if (ViewBag.CloudEnvironment != "AzureChinaCloud")
         {
             <p>Migration & Expansion provide customers with service and guide to reduce the friction in Cloud migration and expansion between Azure China and Global Azure.</p>
             <br />
             <p>It consists of two parts:</p>
             <br />
-            <p><b>Assessment Web service</b> provides the functionality to assess the service and configuration parity between the source and destination environment and estimate the cost. Customer could conduct assessment with subscription and/or Azure usage report</p>
+            <p><b>Assessment web service</b> provides the functionality to assess the service and configuration parity between the source and destination environment and estimate the cost. Customer could conduct assessment with subscription and/or Azure usage report</p>
             <br />
-            <p> •	For assessment with subscription, please sign -in first, input subscription information for assessment and checking out reports</p>
+            <p> •	For assessment with subscription, please sign-in first, input subscription information for assessment and checking out reports</p>
             <br />
             <p> •	For assessment with usage report, please upload Azure usage report V2 and check out the report</p>
-            <br />
-            <p><b>Migration guidebook</b> is an engineering verified, step by step guide and demo video for major workloads migration.Major workloads include Virtual Machine, Storage, Networking, Database and Web Apps.</p>
         }
         else
         {
@@ -48,11 +45,12 @@
             <p><b>Assessment web service</b> provides the functionality to assess the service and configuration parity between the source and destination environment and estimate the cost. Customer could conduct assessment with subscription</p>
             <br />
             <p> •	For assessment with subscription, please sign-in first, input subscription information for assessment and checking out reports</p>
-            <br />
-            <p><b>Migration guidebook</b> is an engineering verified, step by step guide and demo video for major workloads migration. Major workloads include Virtual Machine, Storage, Networking, Database and Web Apps.</p>
         }
+        <br />
+        <p><b>Migration guidebook</b> is an engineering verified, step by step guide and demo video for major workloads migration. Major workloads include Virtual Machine, Storage, Networking, Database and Web Apps.</p>
+        <br />
+        <p>Customers could also download the China Cloud Migration & Expansion <a class="bold-link" href="https://github.com/Azure/ccme">source code</a> on GitHub for compiling and running the service locally.</p>
     </div>
-
 </div>
 
 @if (!string.IsNullOrWhiteSpace(Request.QueryString["errormessage"]))

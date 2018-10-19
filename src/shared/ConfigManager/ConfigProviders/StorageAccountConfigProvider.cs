@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -167,8 +166,6 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ConfigProviders
         /// </exception>
         private string GetBlobFileContent(string path)
         {
-            Debug.Assert(!string.IsNullOrWhiteSpace(path));
-
             var fileBlob = this.configContainer.GetBlockBlobReference(path);
 
             if (!fileBlob.Exists())

@@ -18,9 +18,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.DAL
 
         static StorageAccess()
         {
-            if (!CloudStorageAccount.TryParse(
-                ConfigHelper.StorageAccountConnectionString,
-                out var storageAccount))
+            if (!CloudStorageAccount.TryParse(ConfigHelper.StorageAccountConnectionString, out var storageAccount))
             {
                 Trace.TraceError(@"Invalid storage account connection string.");
                 return;

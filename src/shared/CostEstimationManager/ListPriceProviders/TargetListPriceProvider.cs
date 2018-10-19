@@ -7,62 +7,131 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.CCME.Assessment.Environments;
 using Microsoft.Azure.CCME.Assessment.Managers.RateCardApi.Models;
 using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.ListPriceProviders
 {
-    public static class TargetListPriceProvider
+    public class TargetListPriceProvider
     {
-        // TODO: replace list price files link
-        private const string ChinaListPriceFileLink =
-            @"https://globalconnectioncenter.blob.core.windows.net/pricelist/azurechinaprice.json";
+        private const string TelemetryLogSection = "CostEstimation";
 
-        private const string GermanyListPriceFileLink =
-            @"https://globalconnectioncenter.blob.core.windows.net/pricelist/azuregermanyprice.json";
-
-        private static readonly Dictionary<string, string> ListPriceFileLinks = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly IReadOnlyDictionary<string, PriceListMappingItem> PriceListNameByTargetRegion = new Dictionary<string, PriceListMappingItem>(StringComparer.OrdinalIgnoreCase)
         {
-            { "chinaeast", ChinaListPriceFileLink },
-            { "chinanorth", ChinaListPriceFileLink },
-            { "chinaeast2", ChinaListPriceFileLink },
-            { "chinanorth2", ChinaListPriceFileLink },
-            { "germanycentral", GermanyListPriceFileLink },
-            { "germanynortheast", GermanyListPriceFileLink }
+            {
+                "chinaeast",
+                new PriceListMappingItem
+                {
+                    PriceListName = "azurechinaprice.json",
+                    MeterRegion = "CN East"
+                }
+            },
+            {
+                "chinanorth",
+                new PriceListMappingItem
+                {
+                    PriceListName = "azurechinaprice.json",
+                    MeterRegion = "CN North"
+                }
+            },
+            {
+                "chinaeast2",
+                new PriceListMappingItem
+                {
+                    PriceListName = "azurechinaprice.json",
+                    MeterRegion = "CN East 2"
+                }
+            },
+            {
+                "chinanorth2",
+                new PriceListMappingItem
+                {
+                    PriceListName = "azurechinaprice.json",
+                    MeterRegion = "CN North 2"
+                }
+            }
         };
 
-        public static async Task<IEnumerable<ListPriceMeter>> GetMetersAsync(
+        private readonly IAssessmentContext context;
+
+        public TargetListPriceProvider(IAssessmentContext context)
+        {
+            this.context = context;
+        }
+
+        public async Task<IEnumerable<ListPriceMeter>> GetMetersAsync(
             string targetRegion,
             IEnumerable<ListPriceMeter> sourceMeters)
         {
-            if (!ListPriceFileLinks.TryGetValue(targetRegion, out var fileLink))
+            if (!PriceListNameByTargetRegion.TryGetValue(targetRegion, out var mappingItem))
             {
                 throw new NotSupportedException();
             }
 
-            var payload = await GetPayloadFromFileAsync(fileLink);
-            return payload.Meters
-                .Where(m => sourceMeters.Any(src =>
-                    src.MeterCategory.Equals(m.MeterCategory)
-                    && src.MeterName.Equals(m.MeterName)
-                    && src.MeterSubCategory.Equals(m.MeterSubCategory)))
-                .Select(m => new ListPriceMeter(m)).ToList().Skip(0);
+            var content = this.context.ConfigManager.GetValue($"priceList/{mappingItem.PriceListName}", ConfigType.ListPrice);
+            var payload = JsonConvert.DeserializeObject<RateCardPayload>(content);
+
+            var sourceMeterCrossEnvironmentIds = new HashSet<string>(sourceMeters.Select(m => m.CrossEnvironmentId));
+
+            return await Task.FromResult(payload.Meters
+                .GroupBy(m => m.CrossEnvironmentId)
+                .Where(g => sourceMeterCrossEnvironmentIds.Contains(g.Key))
+                .Select(g => this.SelectMeter(g, mappingItem.MeterRegion))
+                .Select(m => new ListPriceMeter(m))
+                .ToList());
         }
 
-        private static async Task<RateCardPayload> GetPayloadFromFileAsync(
-            string fileLink)
+        private Meter SelectMeter(IGrouping<string, Meter> meterGroup, string desiredMeterRegion)
         {
-            using (var webClient = new WebClient
+            var meter = this.GetMeter(meterGroup, desiredMeterRegion);
+            if (meter != null)
             {
-                Encoding = Encoding.UTF8
-            })
-            {
-                var content = await webClient.DownloadStringTaskAsync(new Uri(fileLink));
-                return JsonConvert.DeserializeObject<RateCardPayload>(content);
+                return meter;
             }
+
+            meter = this.GetMeter(meterGroup, "CN");
+            if (meter != null)
+            {
+                return meter;
+            }
+
+            meter = this.GetMeter(meterGroup, string.Empty);
+            if (meter != null)
+            {
+                return meter;
+            }
+
+            return meterGroup.First();
+        }
+
+        private Meter GetMeter(IEnumerable<Meter> meters, string meterRegion)
+        {
+            var candidates = meters.Where(m => m.MeterRegion == meterRegion);
+            switch (candidates.Count())
+            {
+                case 0:
+                    return null;
+
+                case 1:
+                    return candidates.Single();
+
+                default:
+                    this.context.TelemetryManager.WriteLog(
+                        TelemetryLogLevel.Warning,
+                        TelemetryLogSection,
+                        FormattableString.Invariant($"Conflict target list price meter"),
+                        candidates.Select(m => FormattableString.Invariant($"{m.MeterId} @ {m.MeterRegion}: {m.MeterRates.First().Value}/{m.Unit}")));
+
+                    return candidates.OrderByDescending(m => m.EffectiveDate).First();
+            }
+        }
+
+        private class PriceListMappingItem
+        {
+            public string PriceListName { get; set; }
+            public string MeterRegion { get; set; }
         }
     }
 }

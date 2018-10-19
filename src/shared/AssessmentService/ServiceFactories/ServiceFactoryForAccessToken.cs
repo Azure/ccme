@@ -19,12 +19,12 @@ namespace Microsoft.Azure.CCME.Assessment.Services.ServiceFactories
         }
 
         public IResourceManager GetResourceManager()
-            => new ResourceManager(this.context);
+            => new ResourceManager(this.Context);
 
         public IBillingProvider GetBillProvider()
-            => new RateCardBillingProvider(this.context);
+            => new RateCardBillingProvider(this.Context);
 
         public IListPriceProvider GetListPriceProvider()
-            => new RateCardListPriceProvider(this.context);
+            => new RateCardListPriceProvider(this.Context);
     }
 }

@@ -47,7 +47,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.BillingProviders
                     catch (CloudException ex)
                     {
                         if (this.context.ARMBaseUri == new AzureEnvironmentHelper("AzureChinaCloud").ResourceManagerEndpoint
-                            && ex.Message.StartsWith("The resource type could not be found in the namespace 'Microsoft.Commerce'"))
+                            && ex.Message.StartsWith("The resource type could not be found in the namespace 'Microsoft.Commerce'", StringComparison.OrdinalIgnoreCase))
                         {
                             // Skip usage retrieving since the RP is not available yet in Azure China Cloud
                             usages = new UsageAggregate[] { };
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.BillingProviders
                             .SelectMany(r => r.Value)
                             .Select(m => m.Id)
                             .Distinct(),
-                        StringComparer.InvariantCultureIgnoreCase);
+                        StringComparer.OrdinalIgnoreCase);
 
                     resourceUsages.AddRange(usages
                         .Where(u => resourceIds.Contains(u.ResourceUri))

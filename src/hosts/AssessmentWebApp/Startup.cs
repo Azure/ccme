@@ -32,7 +32,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
 
         public void Configuration(IAppBuilder app)
         {
-            this.issuerPrefix = GetIssuerPrefixAsync().GetAwaiter().GetResult();
+            this.issuerPrefix = this.GetIssuerPrefixAsync().GetAwaiter().GetResult();
 
             app.SetDefaultSignInAsAuthenticationType(
                 CookieAuthenticationDefaults.AuthenticationType);
@@ -72,12 +72,17 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
 
             TelemetryHelper.LogVerbose(@"OnAuthorizationCodeReceived", telemetryContext);
 
-            var authContext = AuthenticationContextFactory.CreateNew(user.GetTenantId(), user.GetUserObjectId());
+            var authContext = new AuthenticationContext($"{ConfigHelper.AuthenticationEndpoint}{user.GetTenantId()}");
             var result = await authContext.AcquireTokenByAuthorizationCodeAsync(
                 context.Code,
                 new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path)),
                 new ClientCredential(ConfigHelper.ApplicationId, ConfigHelper.ApplicationSecret),
                 ConfigHelper.ResourceManagerEndpoint);
+
+            context.AuthenticationTicket.Identity.AddClaims(new[]
+            {
+                new Claim(Constants.TokenKey, result.AccessToken)
+            });
 
             TelemetryHelper.WriteEvent(
                 TelemetryEventNames.AuthSignedIn,
@@ -133,7 +138,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts
             SecurityTokenValidatedNotification<OpenIdConnectMessage, OpenIdConnectAuthenticationOptions> context)
         {
             var issuer = context.AuthenticationTicket.Identity.FindFirst("iss").Value;
-            if (!issuer.StartsWith(issuerPrefix, StringComparison.InvariantCultureIgnoreCase))
+            if (!issuer.StartsWith(this.issuerPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 throw new System.IdentityModel.Tokens.SecurityTokenValidationException();
             }

@@ -20,7 +20,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.TelemetryProviders
 
         public AppInsightsTelemetryProvider(string appInsightKey)
         {
-            if (appInsightKey.StartsWith("{") && appInsightKey.EndsWith("}"))
+            if (appInsightKey == "-placeholder-")
             {
                 TelemetryConfiguration.Active.DisableTelemetry = true;
                 this.telemetryClient = null;
@@ -49,7 +49,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.TelemetryProviders
 
             if (exception != null)
             {
-                msg += $"{Environment.NewLine}Exception:{Environment.NewLine}{exception.GetDetailMessage()}";
+                msg += FormattableString.Invariant($"{Environment.NewLine}Exception:{Environment.NewLine}{exception.GetDetailMessage()}");
                 this.telemetryClient?.TrackException(exception);
             }
 
@@ -60,16 +60,16 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.TelemetryProviders
                 case TelemetryLogLevel.Verbose:
                 case TelemetryLogLevel.Information:
                 default:
-                    Trace.TraceInformation($"{now}: {msg}");
+                    Trace.TraceInformation(FormattableString.Invariant($"{now}: {msg}"));
                     break;
 
                 case TelemetryLogLevel.Warning:
-                    Trace.TraceWarning($"{now}: {msg}");
+                    Trace.TraceWarning(FormattableString.Invariant($"{now}: {msg}"));
                     break;
 
                 case TelemetryLogLevel.Error:
                 case TelemetryLogLevel.Critical:
-                    Trace.TraceError($"{now}: {msg}");
+                    Trace.TraceError(FormattableString.Invariant($"{now}: {msg}"));
                     break;
             }
 
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.TelemetryProviders
 
             metricTelemetry.Properties.Merge(properties);
 
-            Trace.TraceInformation($"Write metric {metricName} with value {metricValue}");
+            Trace.TraceInformation(FormattableString.Invariant($"Write metric {metricName} with value {metricValue}"));
             this.telemetryClient?.TrackMetric(metricTelemetry);
         }
 
@@ -110,7 +110,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.TelemetryProviders
 
             eventTelemetry.Properties.Merge(properties);
 
-            Trace.TraceInformation($"Write event {eventName}");
+            Trace.TraceInformation(FormattableString.Invariant($"Write event {eventName}"));
             this.telemetryClient?.TrackEvent(eventTelemetry);
         }
 

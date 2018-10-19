@@ -388,21 +388,21 @@ btn-input-blue:focus {
 /****   welcome page    ***/
 .welcome-page {
     height: 100%;
-    padding: 60px;
+    padding: 30px;
     margin: 0 auto;
 }
 
 .welcome-wrap {
-    padding-top: 10%;
+    padding-top: 2%;
     text-align: center;
-    color: #ffffff;
+    color: #222222;
 }
 
 .welcome-cloud {
     background: url(../Resources/imgs/cloud_icon.png) no-repeat;
     width: 11.375rem;
     height: 7.875rem;
-    margin: 3.75rem auto;
+    margin: 1.7rem auto;
 }
 
 .welcome-wrap h2 {
@@ -418,13 +418,12 @@ btn-input-blue:focus {
     text-align: left;
     font-size: 1.5em;
     line-height: 1.25em;
-    max-width: 1237px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
 .privacystatement {
     height: 20px;
-    margin-top: 10px;
     margin-right: 20px;
     float: right;
 }
@@ -441,7 +440,7 @@ btn-input-blue:focus {
     max-width: 800px;
 }
 
-/******************* Migration Playbook ****************/
+/******************* Migration Guidebook ****************/
 .container-a p, .container-a h3 {
     line-height: 1;
 }
@@ -494,6 +493,10 @@ btn-input-blue:focus {
 
     .video-small.video-web-application {
         background-image: url(../Resources/imgs/video-poster-app-service.png);
+    }
+
+    .video-small.video-cosmosdb {
+        background-image: url(../Resources/imgs/video-poster-cosmosdb.png);
     }
 
 .video-small-play {

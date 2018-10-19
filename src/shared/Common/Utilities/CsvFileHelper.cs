@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.CCME.Assessment.Utilities
 
                 try
                 {
-                    var value = Convert.ChangeType(line[attribute.Order], propertyInfo.PropertyType);
+                    var value = Convert.ChangeType(line[attribute.Order], propertyInfo.PropertyType, CultureInfo.InvariantCulture);
                     propertyInfo.SetValue(obj, value);
                 }
                 catch

@@ -30,7 +30,7 @@
                     <li class="img-home">@Html.ActionLink("Home", "Index", "Home")</li>
                     @if (!Request.IsAuthenticated)
                     {
-                        <li class="img-signin">@Html.ActionLink("SignIn", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, null)</li>
+                        <li class="img-signin">@Html.ActionLink("Sign in", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, null)</li>
                         <li class="img-feedback">@Html.ActionLink("Feedback", "Index", "Feedback")</li>
                     }
                     else
@@ -55,7 +55,7 @@
             {
                 <div> @Html.ActionLink("Assessment with Usage Report", "Index", "AssessmentWithUsageReport", new { area = "" }, new { @class = "nav-l" }) </div>
             }
-            <div> @Html.ActionLink("Migration Playbook", "Index", "Migration", new { area = "" }, new { @class = "nav-l line-one" }) </div>
+            <div> @Html.ActionLink("Migration Guidebook", "Index", "Migration", new { area = "" }, new { @class = "nav-l" }) </div>
         </div>
         <div class="content">
             <div class="main-content">
