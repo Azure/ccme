@@ -1,0 +1,11 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Key Vault SKU {name} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "family": "A",
+      "name": "Standard"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aadApplicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "AAD Application Id"
+      }
+    },
+    "aadApplicationSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "AAD Application Secret"
+      }
+    },
+    "websiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "Host name of the Website"
+      }
+    },
+    "sqlServerAdminName": {
+      "type": "string",
+      "defaultValue": "ccmesqladmin",
+      "metadata": {
+        "description": "SQL Server Admin Name"
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL Server Admin Password"
+      }
+    }
+  },
+  "variables": {
+    "resourcePrefix": "[uniquestring(resourceGroup().id)]",
+    "defaultLocation": "[resourceGroup().location]",
+    "storageAccountName": "[concat(variables('resourcePrefix'), 'sa')]",
+    "storageAccountSKU": "Standard_LRS",
+    "sqlServerName": "[concat(variables('resourcePrefix'), 'sqlsvr')]",
+    "sqlServerAdminName": "[parameters('sqlServerAdminName')]",
+    "sqlServerAdminPassword": "[parameters('sqlServerAdminPassword')]",
+    "sqlDatabaseName": "[concat(variables('resourcePrefix'), 'sqldb')]",
+    "appServicePlanName": "[concat(variables('resourcePrefix'), 'svcplan')]",
+    "webAppName": "[if(empty(parameters('websiteName')),concat(variables('resourcePrefix'), 'webapp'),parameters('websiteName'))]",
+    "aadApplicationId": "[parameters('aadApplicationId')]",
+    "aadApplicationSecret": "[parameters('aadApplicationSecret')]",
+    "repoURL": "https://github.com/Azure/ccme.git",
+    "branch": "prerelease"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[variables('defaultLocation')]",
+      "sku": {
+        "name": "[variables('storageAccountSKU')]"
+      },
+      "kind": "Storage"
+    },
+    {
+      "type": "Microsoft.Sql/servers",
+      "name": "[variables('sqlServerName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[variables('defaultLocation')]",
+      "properties": {
+        "administratorLogin": "[variables('sqlServerAdminName')]",
+        "administratorLoginPassword": "[variables('sqlServerAdminPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[variables('sqlDatabaseName')]",
+          "type": "databases",
+          "location": "[variables('defaultLocation')]",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[variables('sqlServerName')]"
+          ],
+          "properties": {
+            "edition": "Basic",
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "Basic"
+          }
+        },
+        {
+          "type": "firewallRules",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[variables('sqlServerName')]"
+          ],
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('appServicePlanName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[variables('defaultLocation')]",
+      "sku": {
+        "name": "B1",
+        "Tier": "Basic"
+      },
+      "properties": {
+        "name": "[variables('appServicePlanName')]",
+        "workerSize": "0",
+        "workerSizeId": "0",
+        "numberOfWorkers": 1,
+        "reserved": false
+      }
+    },
+    {
+      "name": "[variables('webAppName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2015-08-01",
+      "location": "[variables('defaultLocation')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ],
+      "properties": {
+        "name": "[variables('webAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]",
+        "siteConfig": {
+          "minTlsVersion": "1.2"
+        }
+      },
+      "resources": [
+        {
+          "name": "web",
+          "type": "sourcecontrols",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', variables('webAppName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/sites/config', variables('webAppName'), 'connectionstrings')]"
+          ],
+          "properties": {
+            "RepoUrl": "[variables('repoURL')]",
+            "branch": "[variables('branch')]",
+            "IsManualIntegration": true
+          }
+        },
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]",
+            "[resourceId('Microsoft.Sql/servers/databases', variables('sqlServerName'), variables('sqlDatabaseName'))]"
+          ],
+          "properties": {
+            "CCMEDB": {
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDatabaseName'), ';User Id=', variables('sqlServerAdminName'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', variables('sqlServerAdminPassword'), ';')]",
+              "type": "SQLAzure"
+            }
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+          ],
+          "properties": {
+            "DeploymentId": "[variables('webAppName')]",
+            "ApplicationId": "[variables('aadApplicationId')]",
+            "ApplicationSecret": "[variables('aadApplicationSecret')]",
+            "ReplyUri": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('webAppName'))).hostnames[0], '/')]",
+            "StorageAccountConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName')), providers('Microsoft.Storage','storageAccounts').apiVersions[0]).keys[0].value)]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "webAppLink": {
+      "value": "[concat('https://', reference(concat('Microsoft.Web/sites/', variables('webAppName'))).hostnames[0], '/')]",
+      "type": "string"
+    },
+    "webAppName": {
+      "value": "[variables('webAppName')]",
+      "type": "string"
+    },
+    "storageAccountName": {
+      "value": "[variables('storageAccountName')]",
+      "type": "string"
+    }
+  }
+}

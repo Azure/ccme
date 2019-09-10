@@ -1,0 +1,31 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Analysis Service SKU {name} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "B1",
+      "tier": "Basic"
+    },
+    {
+      "name": "B2",
+      "tier": "Basic"
+    },
+    {
+      "name": "S0",
+      "tier": "Standard"
+    },
+    {
+      "name": "S1",
+      "tier": "Standard"
+    },
+    {
+      "name": "S2",
+      "tier": "Standard"
+    },
+    {
+      "name": "S4",
+      "tier": "Standard"
+    }
+  ]
+}

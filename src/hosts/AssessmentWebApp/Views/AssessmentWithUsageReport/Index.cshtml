@@ -1,0 +1,143 @@
+﻿@model  Microsoft.Azure.CCME.Assessment.Hosts.Models.AssessmentWithUsageReportModel
+
+@{
+    ViewBag.Title = "Assessment with Usage Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="p-60 usage-report">
+    <div>
+        <h1 id ="AssessmentWithUsageReport" class="title-one">Assessment with Usage Report</h1>
+    </div>
+
+    <div>
+        <form id="form">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-3"> @Html.LabelFor(model => model.SelectedTargetRegion, "Target Regions", new { @class = "label-title", @title = "Target Regions" })</div>
+                <div class="col-md-9"> @Html.DropDownListFor(model => model.SelectedTargetRegion, Model.TargetRegionListItems, "-- Select Target Region --", new { id = "lstTargetRegions", aria_label = "regions" })</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.UsageReportFile, "Usage report",
+                   new { @class = "label-title",
+                       aria_label = "Usage Report, click here to choose a file",
+                       title = "Usage Report, click here to choose a file"
+                   })
+                </div>
+                <div class="col-md-9">
+                    @Html.TextBoxFor(model => model.UsageReportFile,
+                   new { id = "usageReportFile",
+                       type = "file",
+                       name = "UsageReportFile",
+                       @class = "fileUpload inputfile",
+                       aria_label = "Usage Report, click here to choose a file",
+                       title = "Usage Report, click here to choose a file"
+                   })
+
+                    <label aria-label="Click here to choose a file" id="usageReportFileLabel" for="usageReportFile">
+                        Click Here Choose a file
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9 col-md-offset-3 right-align">
+                    <button id="btnRun" type="submit" class=" btn-blue btnFixedSize">Run</button>
+                </div>
+            </div>
+
+            <div aria-live=assertive aria-atomic="true">
+                <span id="errorMessage" class="errorMessage" style="display: block"></span>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $('#skipToMainContent').attr('href', '#AssessmentWithUsageReport');
+
+            $("#usageReportFile").fileinput({
+                'showUpload': false
+            });
+            $('.inputfile').each(function () {
+                var $input = $(this),
+                    $label = $input.next('label'),
+                    labelVal = $label.html();
+
+                $input.on('change', function (e) {
+                    var fileName = '';
+
+                    if (this.files && this.files.length > 1) {
+                        fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+                    } else if (e.target.value) {
+                        if (this.files[0].size > 4194304) {
+                            alert('The uploaded file size is not allowed to be greater than 4MB');
+                            return;
+                        }
+                        fileName = e.target.value.split('\\').pop();
+                    }
+
+                    if (fileName)
+                        $label.html(fileName);
+                    else
+                        $label.html(labelVal);
+                });
+            });
+            $('#form').submit(function (e) {
+                e.preventDefault();
+
+                var targetRegion = $('#lstTargetRegions').val();
+                var usageFile = $('#usageReportFile').val();
+
+                if (!targetRegion || !usageFile) {
+                    alert('Missing input');
+                    return;
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/AssessmentWithUsageReport/Run');
+                xhr.responseType = 'blob';
+                xhr.onload = function (e) {
+                    $('.loading').hide();
+
+                    if (this.status !== 200) {
+                        alert(this.statusText);
+                        return;
+                    }
+
+                    var filename = 'untitiled.pdf';
+                    var disposition = xhr.getResponseHeader('content-disposition');
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+
+                    if (navigator.msSaveOrOpenBlob) {
+                        navigator.msSaveOrOpenBlob(this.response, filename);
+                    } else {
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(this.response);
+                        link.download = filename;
+
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                };
+
+                $('.loading').show();
+                xhr.send(new FormData(this));
+            });
+            $('#lstTargetRegions').focus();
+        });
+    </script>
+}

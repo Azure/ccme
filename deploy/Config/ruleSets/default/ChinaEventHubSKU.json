@@ -1,0 +1,207 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Event Hub SDK {name} {capacity} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 1
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 2
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 3
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 4
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 5
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 6
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 7
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 8
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 9
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 10
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 11
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 12
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 13
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 14
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 15
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 16
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 17
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 18
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 19
+    },
+    {
+      "name": "Standard",
+      "tier": "Standard",
+      "capacity": 20
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 1
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 2
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 3
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 4
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 5
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 6
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 7
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 8
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 9
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 10
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 11
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 12
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 13
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 14
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 15
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 16
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 17
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 18
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 19
+    },
+    {
+      "name": "Basic",
+      "tier": "Basic",
+      "capacity": 20
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Notification Hub SKU {name} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "Free"
+    },
+    {
+      "name": "Basic"
+    },
+    {
+      "name": "Standard"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+In this video, we are going to show how to migrate Azure Virtual Machines between region via Azure Site Recovery
+
+00:00:05.000 --> 00:00:12.000
+First, we need to prepare infrastructure for Azure to Azure migration
+
+00:00:12.000 --> 00:00:42.000
+Select source virtual machine then enable replication
+
+00:00:42.000 --> 00:01:15.000
+Once the replication was completed, we could verify it by test failover, or directly start the migration with "failover"
+
+00:01:15.000 --> 00:01:55.000
+Reminder, the migrated virtual machine has no public IP by default. We need to assign a public IP manually
+
+00:01:55.000 --> 00:02:15.000
+Now the virtual machine is running in destination region. Let's check it via remote connection
+
+00:02:15.000 --> 00:02:23.000
+After the test failover completed, we could clean up the test virtual machine to save cost
+
+00:02:23.000 --> 00:02:23.000
+(end)

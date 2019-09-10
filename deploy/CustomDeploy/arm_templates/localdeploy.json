@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlServerAdminName": {
+      "type": "string",
+      "defaultValue": "ccmesqladmin",
+      "metadata": {
+        "description": "SQL Server Admin Name"
+      }
+    },
+    "sqlServerAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL Server Admin Password"
+      }
+    }
+  },
+  "variables": {
+    "resourcePrefix": "[uniquestring(resourceGroup().id)]",
+    "defaultLocation": "[resourceGroup().location]",
+    "storageAccountName": "[concat(variables('resourcePrefix'), 'sa')]",
+    "storageAccountSKU": "Standard_LRS",
+    "sqlServerName": "[concat(variables('resourcePrefix'), 'sqlsvr')]",
+    "sqlServerAdminName": "[parameters('sqlServerAdminName')]",
+    "sqlServerAdminPassword": "[parameters('sqlServerAdminPassword')]",
+    "sqlDatabaseName": "[concat(variables('resourcePrefix'), 'sqldb')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[variables('defaultLocation')]",
+      "sku": {
+        "name": "[variables('storageAccountSKU')]"
+      },
+      "kind": "Storage"
+    },
+    {
+      "type": "Microsoft.Sql/servers",
+      "name": "[variables('sqlServerName')]",
+      "apiVersion": "2014-04-01",
+      "location": "[variables('defaultLocation')]",
+      "properties": {
+        "administratorLogin": "[variables('sqlServerAdminName')]",
+        "administratorLoginPassword": "[variables('sqlServerAdminPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[variables('sqlDatabaseName')]",
+          "type": "databases",
+          "location": "[variables('defaultLocation')]",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[variables('sqlServerName')]"
+          ],
+          "properties": {
+            "edition": "Basic",
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "Basic"
+          }
+        },
+        {
+          "type": "firewallRules",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[variables('sqlServerName')]"
+          ],
+          "name": "OpenForAllIps",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "sqlDatabaseConnectionString": {
+      "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDatabaseName'), ';User Id=', variables('sqlServerAdminName'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', variables('sqlServerAdminPassword'), ';')]",
+      "type": "string"
+    },
+    "storageAccountConnectionString": {
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName')), providers('Microsoft.Storage','storageAccounts').apiVersions[0]).keys[0].value)]",
+      "type": "string"
+    }
+  }
+}

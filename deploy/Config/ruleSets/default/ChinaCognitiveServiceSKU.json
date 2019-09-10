@@ -1,0 +1,13 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Cognitive service SKU {name} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "S0"
+    },
+    {
+      "name": "F0"
+    }
+  ]
+}

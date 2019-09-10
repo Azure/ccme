@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - China Cloud Migration & Expansion</title>
+    @Styles.Render("~/Content/css") @Styles.Render("~/Content/main.css") @Styles.Render("~/Content/perfect-scrollbar.css") @Scripts.Render("~/bundles/modernizr")
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="Page">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a id="skipToMainContent" class="navbar-brand focusDiff" href="#welcome" autofocus>Skip to Main Content</a>
+                    @Html.ActionLink("China Cloud Migration & Expansion (Preview)", "Index", "Home", new { area = "" }, new { @class = "navbar-brand focusDiff" })
+                    <button type="button" class="navbar-toggle focusDiff" id="detect" data-toggle="collapse" data-target=".navbar-collapse" aria-label="ToggleNavBar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="img-home">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "focusDiff" })</li>
+                        @*<li class="img-home">@Html.ActionLink("Skip to Main Content", "Index", "Home", null, new { id = "welcome" })</li>*@
+                        @if (!Request.IsAuthenticated)
+                        {
+                            <li class="img-signin">@Html.ActionLink("Sign in", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, new { @class= "focusDiff" })</li>
+                            <li class="img-feedback">@Html.ActionLink("FAQ", "Index", "Feedback", new { @class = "focusDiff" })</li>
+                        }
+                        else
+                        {
+                            <li class="img-signin">@Html.ActionLink("Sign out", "SignOut", "Home", new { @class = "focusDiff" })</li>
+                            <li class="img-feedback">@Html.ActionLink("FAQ", "Index", "Feedback", new { @class = "focusDiff" })</li>
+                            <li class="img-user">
+                                <span class="about-me">
+                                    @System.Security.Claims.ClaimsPrincipal.Current.FindFirst("name").Value
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+            <div class="left-bar">
+                <div> @Html.ActionLink("Assessment with Subscription", "ListSubscription", "Assessment", new { area = "" }, new { @class = "nav-l show-load" })</div>
+                @if (ViewBag.CloudEnvironment != "AzureChinaCloud")
+                {
+                    <div> @Html.ActionLink("Assessment with Usage Report", "Index", "AssessmentWithUsageReport", new { area = "" }, new { @class = "nav-l" }) </div>
+                }
+                <div> @Html.ActionLink("Migration Guidebook", "Index", "Migration", new { area = "" }, new { @class = "nav-l" }) </div>
+            </div>
+            <div class="content">
+                <div class="main-content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <div class="loading">
+            <div class="loading-color">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        <script>
+            $(function () {
+                $("#skipToMainContent").focus();
+                $(".show-load").on("click", function () {
+                    $(".loading").show();
+                });
+                $(".btn-sign").on("click", function () {
+                    $(".loading").show();
+                });
+
+                var url = window.location.pathname;
+                var activePage = url.substring(url.lastIndexOf('/') + 1);
+                $('.nav-l').each(function () {
+                    var currentPage = this.href.substring(this.href.lastIndexOf('/') + 1);
+
+                    if (activePage == currentPage) {
+                        $(this).addClass('active');
+                    }
+                });
+
+            });
+        </script>
+
+        <script src="~/Scripts/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript">
+            $('.js-pscroll').each(function () {
+                var ps = new PerfectScrollbar(this);
+                $(window).on('resize', function () {
+                    ps.update();
+                })
+            });
+
+            $('#Page').each(
+                function () {
+                    $(this).on('focus', function () {
+                        $(this).addClass("focus-border");
+                    })
+                }
+            );
+            $('#Page').each(
+                function () {
+                    $(this).on('blur', function () {
+                        $(this).removeClass("focus-border");
+                    })
+                }
+            );
+        </script>
+        @RenderSection("scripts", required: false)
+    </div>
+</body>
+
+</html>

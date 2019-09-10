@@ -1,0 +1,28 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:03.000
+In this video, we are going to show how to migrate Blob storage via the AzCopy tool.
+
+00:00:03.000 --> 00:00:06.000
+Before migration, we need to create a container in the destinaton Azure Storage Account
+
+00:00:06.000 --> 00:00:10.000
+Let's open a prompt window to enter the AzCopy command line
+
+00:00:10.000 --> 00:00:32.000
+Input the source blob container URL, storage key and "blob" as the source type
+
+00:00:32.000 --> 00:00:10.000
+Input the destinaton blob container URL, storage key and "blob" as the source type
+
+00:00:54.000 --> 00:01:00.000
+At the last, we add a swith "/S" for recursive mode copy
+
+00:01:00.000 --> 00:01:08.000
+By default, AzCopy will perform server-side asynchronous copy. Let's just wait until it was completed
+
+00:01:00.000 --> 00:01:16.000
+From the Azure portal, we could verify if the blobs were migrated successfully
+
+00:01:16.000 --> 00:01:16.000
+(end)

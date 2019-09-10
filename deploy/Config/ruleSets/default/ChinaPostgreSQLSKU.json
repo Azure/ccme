@@ -1,0 +1,17 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "Database for PostgreSQL SKU {name} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "GP_Gen5_2",
+      "tier": "GeneralPurpose",
+      "family": "Gen5"
+    },
+    {
+      "name": "B_Gen5_2",
+      "tier": "Basic",
+      "family": "Gen5"
+    }
+  ]
+}

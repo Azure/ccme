@@ -1,0 +1,10 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "SQL server kind {kind} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "kind": "v12.0"
+    }
+  ]
+}

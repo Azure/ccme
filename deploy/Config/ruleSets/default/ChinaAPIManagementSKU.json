@@ -1,0 +1,75 @@
+{
+  "contentVersion": "1.0.0.0",
+  "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
+  "whitelistNoHitMessage": "API Management SKU {name} {capacity} is not supported in {targetRegion}",
+  "whitelist": [
+    {
+      "name": "Developer",
+      "capacity": 1
+    },
+    {
+      "name": "Basic",
+      "capacity": 1
+    },
+    {
+      "name": "Basic",
+      "capacity": 2
+    },
+    {
+      "name": "Standard",
+      "capacity": 1
+    },
+    {
+      "name": "Standard",
+      "capacity": 2
+    },
+    {
+      "name": "Standard",
+      "capacity": 3
+    },
+    {
+      "name": "Standard",
+      "capacity": 4
+    },
+    {
+      "name": "Premium",
+      "capacity": 1
+    },
+    {
+      "name": "Premium",
+      "capacity": 2
+    },
+    {
+      "name": "Premium",
+      "capacity": 3
+    },
+    {
+      "name": "Premium",
+      "capacity": 4
+    },
+    {
+      "name": "Premium",
+      "capacity": 5
+    },
+    {
+      "name": "Premium",
+      "capacity": 6
+    },
+    {
+      "name": "Premium",
+      "capacity": 7
+    },
+    {
+      "name": "Premium",
+      "capacity": 8
+    },
+    {
+      "name": "Premium",
+      "capacity": 9
+    },
+    {
+      "name": "Premium",
+      "capacity": 10
+    }
+  ]
+}

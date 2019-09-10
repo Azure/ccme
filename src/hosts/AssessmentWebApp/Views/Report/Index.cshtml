@@ -1,0 +1,117 @@
+﻿@model  Microsoft.Azure.CCME.Assessment.Hosts.Models.ReportIndexModel
+
+@{
+    ViewBag.Title = "Assessment Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="p-60">
+    @if (Request.IsAuthenticated)
+    {
+        <h1 id="assessmentReport" class="title-one">Assessment Reports</h1>
+
+        <div class="container">
+            <div class="container-table100">
+                <div class="wrap-table100">
+
+                    <div class="table100 ver1 m-b-110">
+                            <table>
+                                <thead class="table100-head">
+                                    <tr class="row100 head">
+                                        <th id="subscription" scope="col" class="cell100 column1" title="Subscription">Subscription</th>
+                                        <th id="createdTime" scope="col" class="cell100 column2" title="Created Time">Created Time</th>
+                                        <th id="status" scope="col" class="cell100 column3" title="Status">Status</th>
+                                        <th id="detail" scope="col" class="cell100 column4" title="Detail">Detail</th>
+                                        <th id="remove" scope="col" class="cell100 column5" title="Remove">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table100-body">
+                                    @foreach (var task in Model.AssessmentTasks.OrderByDescending(t => t.CreatedTime))
+                                    {
+                                        <tr class="row100 body">
+                                            <td headers="subscription" class="cell100 column1" title="Subscription Name">@task.SubscriptionName</td>
+                                            <td headers="createdTime" class="cell100 column2" title="Created Time">@DateTime.SpecifyKind(task.CreatedTime, DateTimeKind.Utc).ToLocalTime().ToString("yyyyMMdd HH:mm:ss")</td>
+                                            <td headers="status" class="cell100 column3" title="Status">@task.Status</td>
+                                            <td headers="detail" class="cell100 column4" title="Download">
+                                                @if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Completed)
+                                                {
+                                                    @Html.ActionLink("download report", "Download", "Report", new { reportId = task.ReportId }, new { aria_label = "Download report for " + task.SubscriptionName + ", created time " + task.CreatedTime, @style = "text-decoration:underline", @class = "download", target = "_blank" })
+                                                }
+                                                else if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Failed)
+                                                {
+                                                    <span class="text-danger" title="Failed Reason" aria-label= '@($"Failed reason for report {task.SubscriptionName}, created time {task.CreatedTime}")'>@task.FailedReason</span>
+                                                }
+                                            </td>
+                                            <td headers="remove" class="cell100 column5" title="Remove">
+                                                @if (task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Completed
+                                                    || task.Status == Microsoft.Azure.CCME.Assessment.Hosts.DAL.Models.AssessmentTask.TaskStatus.Failed)
+                                                {
+                                                    @Html.ActionLink("remove report", "Remove", "Report", new {id = task.Id},
+                                                    new { aria_label = "Remove report for " + task.SubscriptionName + ", created time " + task.CreatedTime, @style = "text-decoration:underline", onclick = "return confirm('Do you really want to remove this report?')"})
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+
+            <div style="display: inline-block">
+                @Html.ActionLink("Go back ", "ListSubscription", "Assessment", new { area = "" }, new { @class = "bold-link" })
+            </div>
+
+            <div style="display: inline-block; float: right">
+                @if (Model.AssessmentTasks.All(t => t.IsDone))
+                {
+                    <input type="checkbox" id="cbAutoRefresh" style="display: inline-block" />
+                }
+                else
+                {
+                    <input type="checkbox" id="cbAutoRefresh" checked="checked" style="display: inline-block" />
+                }
+
+                <label for="cbAutoRefresh">Auto refresh</label>
+                <div>Last refresh at <div id="dateTime" style="color:blue">0000</div></div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>Please Login...</p>
+    }
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var timer = setInterval("autoRefresh()", 5000);
+
+        function autoRefresh() {
+            if (document.getElementById("cbAutoRefresh").checked) {
+                window.location.reload();
+                document.getElementById("dateTime").innerHTML = formatAMPM();
+            }
+        }
+
+        function formatAMPM() {
+            var d = new Date(),
+            minutes = d.getMinutes().toString().length == 1 ? '0' + d.getMinutes() : d.getMinutes(),
+            hours = d.getHours().toString().length == 1 ? '0' + d.getHours() : d.getHours(),
+            ampm = d.getHours() >= 12 ? 'pm' : 'am',
+            months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() + ' ' + d.getFullYear() + ' ' + hours + ':' + minutes + ampm;
+        }
+
+        window.onbeforeunload = function () {
+            this.clearInterval(timer);
+        }
+
+        $(document).ready(function () {
+            $('#skipToMainContent').attr('href', '#assessmentReport');
+            document.getElementById("dateTime").innerHTML = formatAMPM();
+        })
+    </script>
+}
