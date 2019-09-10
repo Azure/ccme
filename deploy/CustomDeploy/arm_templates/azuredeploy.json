@@ -48,7 +48,7 @@
     "aadApplicationId": "[parameters('aadApplicationId')]",
     "aadApplicationSecret": "[parameters('aadApplicationSecret')]",
     "repoURL": "https://github.com/Azure/ccme.git",
-    "branch": "prerelease"
+    "branch": "master"
   },
   "resources": [
     {
