@@ -10,96 +10,172 @@
 </script>
 
 <div class="p-60 playbook">
-    <h2 class="title-one">Migration Guidebook</h2>
+    <h1 id="migration" class="title-one">Migration Guidebook</h1>
     <div class="container-a">
         <div>Migration and expansion between Global Azure and Azure China have unique complexities in internet environment and process aspects, due to the sovereign cloud nature of Azure China. Customer could refer to <a href="https://docs.microsoft.com/en-us/azure/china/">Azure China 21Vianet</a> to plan the migration from business, legal and compliance perspective.</div>
         <br />
         <div>The Migration playbook here laser focus on the technical perspective and introduce the suggested migration tools & services for major workload migration.</div>
 
+        <span id="cueText" aria-live=assertive></span>
+
         <div class="video-list">
             <h3 class="title-three">Virtual Machines:</h3>
-            <div class="video-discription">Azure Site Recovery could migrate Azure VMs between Azure regions. To migrate Azure VMs, you enable replication for them, and fail them over from the primary region to the secondary region of your choice. You could migrate VM with corresponding VNet, Storage, and Availability sets. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/azure-to-azure-support-matrix" target="_blank">Support Matrix and Limitations</a>.</div>
+            <div class="video-discription">Azure Site Recovery could migrate Azure VMs between Azure regions. To migrate Azure VMs, you enable replication for them, and fail them over from the primary region to the secondary region of your choice. You could migrate VM with corresponding VNet, Storage, and Availability sets. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/site-recovery/azure-to-azure-support-matrix" target="_blank">Support Matrix and Limitations</a></div>
             @if (ViewBag.CloudEnvironment == "AzureChinaCloud")
-        {
-            <div class="video-small video-virtual-machine-a2a">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine A2A.mp4"></div>
-            </div>
-    }
-    else
-    {
-        <div class="video-small video-virtual-machine">
-            <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Machine.mp4"></div>
-        </div>
-}
+            {
+                <div class="video-small video-virtual-machine-a2a">
+                    <video tabindex="0" id="A2A" class="video-player" title="Virtual Machine A2A" preload="none" poster=""
+                           src="~/Resources/videos/Virtual Machine A2A.mp4">
+                        <track default kind=captions
+                               srclang="en"
+                               src="~/Resources/videos/ASR A2A.vtt" />
+                        Sorry, your browser doesn't support embedded videos.
+                    </video>
+                </div>
+            }
+            else
+            {
+                <div class="video-small video-virtual-machine">
+                    <video tabindex="0" id="VM" class="video-player" title="Virtual Machine" preload="none" poster=""
+                           src="~/Resources/videos/Virtual Machine.mp4">
+                        <track default kind=captions
+                               srclang="en"
+                               src="~/Resources/videos/Virtual Machine.vtt" />
+                        Sorry, your browser doesn't support embedded videos.
+                    </video>
+                </div>
+            }
         </div>
         <div class="video-list">
             <h3 class="title-three">Storage:</h3>
-            <div class="video-discription">AzCopy could migrate Azure Storage between Azure regions. It is a command-line utility designed for server-side asynchronous copying data to/from Microsoft Azure Blob, File and Table storage. Authorized with the storage key or shared access signature (SAS), AzCopy is region insensitive and applicable for migration. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy" target="_blank">Transfer data with the AzCopy</a>.</div>
+            <div class="video-discription">AzCopy could migrate Azure Storage between Azure regions. It is a command-line utility designed for server-side asynchronous copying data to/from Microsoft Azure Blob, File and Table storage. Authorized with the storage key or shared access signature (SAS), AzCopy is region insensitive and applicable for migration. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy" target="_blank">Transfer data with the AzCopy</a></div>
             <div class="video-small video-storage">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/Blob Storage.mp4"></div>
+                <video tabindex="0" id="AS" class="video-player" title="Azure Storage" preload="none" poster=""
+                       src="~/Resources/videos/Blob Storage.mp4">
+                    <track default kind=captions
+                           srclang="en"
+                           src="~/Resources/videos/Blob Storage.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </div>
         </div>
         <div class="video-list">
             <h3 class="title-three">Virtual Network:</h3>
-            <div class="video-discription"><a class="bold-link" href="https://github.com/Azure/migAz">MigAZ</a> tool could migrate a complete set of ARM IaaS resources, include Virtual Network (Subnets, Network Security Group, Public IP, etc.). The tool uses Resource Manager REST API calls to gather all the details related resources. As per your selection, all the related configurations are exported into the JSON file which can be used for the deployment into ARM.</div>
+            <div class="video-discription"><a class="bold-link" href="https://github.com/Azure/migAz">MigAZ</a> tool could migrate a complete set of ARM IaaS resources, include Virtual Network (Subnets, Network Security Group, Public IP, etc.). The tool uses Resource Manager REST API calls to gather all the details related resources. As per your selection, all the related configurations are exported into the JSON file which can be used for the deployment into ARM</div>
             <div class="video-small video-virtual-network">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/Virtual Network.mp4"></div>
+                <video tabindex="0" id="VN" class="video-player" title="Virtual Network" preload="none" poster=""
+                       src="~/Resources/videos/Virtual Network.mp4">
+                    <track default kind=captions
+                           srclang="en"
+                           src="~/Resources/videos/MigAz.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </div>
         </div>
         <div class="video-list">
             <h3 class="title-three">SQL Database:</h3>
-            <div class="video-discription">SQL Server Integration Services (SSIS) could migrate Azure SQL Database between Azure regions. SSIS is a tool for extracting, transforming and loading data (ETL). The SQL Server Import and Export Wizard is the simplest way to create a basic Integration Services package that copies data from a source to a destination. The SSIS package could be launched immediately or saved for reuse and extend. See <a class="bold-link" href="https://docs.microsoft.com/en-us/sql/integration-services/import-export-data/import-and-export-data-with-the-sql-server-import-and-export-wizard?view=sql-server-2017" target="_blank">Import and Export Data with the SQL Server Import and Export Wizard</a>.</div>
+            <div class="video-discription">SQL Server Integration Services (SSIS) could migrate Azure SQL Database between Azure regions. SSIS is a tool for extracting, transforming and loading data (ETL). The SQL Server Import and Export Wizard is the simplest way to create a basic Integration Services package that copies data from a source to a destination. The SSIS package could be launched immediately or saved for reuse and extend. See <a class="bold-link" href="https://docs.microsoft.com/en-us/sql/integration-services/import-export-data/import-and-export-data-with-the-sql-server-import-and-export-wizard?view=sql-server-2017" target="_blank">Import and Export Data with the SQL Server Import and Export Wizard</a></div>
             <div class="video-small video-database">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/Azure SQL Database.mp4"></div>
+                <video tabindex="0" id="SQL" class="video-player" title="SQL Database" preload="none" poster=""
+                       src="~/Resources/videos/Azure SQL Database.mp4">
+                    <track default kind=captions
+                           srclang="en"
+                           src="~/Resources/videos/Azure SQL Database.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </div>
         </div>
         <div class="video-list">
             <h3 class="title-three">Web Application:</h3>
-            <div class="video-discription">The backup and restore feature in Azure App Service could migrate Web application between Azure regions. App Service can backup configuration, file content and connected database to an Azure Storage account. To migrate the Web application, you need to setup the backup storage, create the backup and copy it to destination region manually, then restore the backup to create a new Web application. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-restore" target="_blank">Restore an app in Azure</a>.</div>
+            <div class="video-discription">The backup and restore feature in Azure App Service could migrate Web application between Azure regions. App Service can backup configuration, file content and connected database to an Azure Storage account. To migrate the Web application, you need to setup the backup storage, create the backup and copy it to destination region manually, then restore the backup to create a new Web application. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-restore" target="_blank">Restore an app in Azure</a></div>
             <div class="video-small video-web-application">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/App Service.mp4"></div>
+                <video tabindex="0" id="App" class="video-player" title="Web Application" preload="none" poster=""
+                       src="~/Resources/videos/App Service.mp4">
+                    <track default kind=captions
+                           srclang="en"
+                           src="~/Resources/videos/App Service.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </div>
         </div>
         <div class="video-list">
             <h3 class="title-three">Azure Cosmos DB:</h3>
-            <div class="video-discription">The Azure Cosmos DB Data Migration Tool could migrate Cosmos DB between Azure regions. The Data Migration tool is an open-source solution that imports data to Azure Cosmos DB from a variety of sources. To migrate the Cosmos DB, you need to provide the connections for both source and target database and the collection name. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/cosmos-db/import-data" target="_blank">Use Data migration tool to migrate your data to Azure Cosmos DB</a>.</div>
+            <div class="video-discription">The Azure Cosmos DB Data Migration Tool could migrate Cosmos DB between Azure regions. The Data Migration tool is an open-source solution that imports data to Azure Cosmos DB from a variety of sources. To migrate the Cosmos DB, you need to provide the connections for both source and target database and the collection name. See <a class="bold-link" href="https://docs.microsoft.com/en-us/azure/cosmos-db/import-data" target="_blank">Use Data migration tool to migrate your data to Azure Cosmos DB</a></div>
             <div class="video-small video-cosmosdb">
-                <div class="video-small-play video_link" videohref="~/Resources/videos/CosmosDB.mp4"></div>
+                <video tabindex="0" id="Cos" class="video-player" title="Azure Cosmos DB" preload="none" poster=""
+                       src="~/Resources/videos/CosmosDB.mp4">
+                    <track default kind=captions
+                           srclang="en"
+                           src="~/Resources/videos/CosmosDB.vtt" />
+                    Sorry, your browser doesn't support embedded videos.
+                </video>
             </div>
-        </div>
-    </div>
-
-    <div class="video-full-screen" id="full-screen-video">
-        <div class="video-container">
-            <video id="my-video" class="video-js vjs-default-skin  vjs-big-play-centered " controls preload="none" width="878" height="568"
-                   poster=""></video>
         </div>
     </div>
 </div>
 @section scripts
 {
-    <script type="text/javascript">
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#skipToMainContent').attr('href', '#migration');
+    });
 
-        $(".video_link").click(function () {
-            $("#full-screen-video").fadeIn();
-            var myPlayer = videojs('my-video');
-            var videoUrl = $(this).attr("videohref");
-            videojs("my-video", {}, function () {
-                window.myPlayer = this;
-                $("#mymoda .video-con #my-video source").attr("src", videoUrl);
-                $("#mymoda .video-con #my-video source").attr("type", 'video/mp4');
-                myPlayer.src(videoUrl);
-                myPlayer.load(videoUrl);
-                myPlayer.play();
-            });
-        });
-        $("#full-screen-video").on("click", function () {
-            $("#full-screen-video").hide();
-            myPlayer.pause();
-        });
-        $(".video-container").on("click", function (e) {
-            e.stopPropagation();
-            e.cancelBubble = true;
-        });
-    </script>
+    function onVideoClicked(event) {
+        var video = document.getElementById(event.target.id);
+
+        // Text track needed
+        if (!video.textTracks) {
+            return
+        };
+
+        // Set text track change event for screen reader
+        var span = document.getElementById('cueText');
+        var track = video.textTracks[0];
+        track.oncuechange = function (e) {
+            var cue = this.activeCues[0];
+            if (cue) {
+                span.focus();
+                span.innerHTML = '';
+                span.appendChild(cue.getCueAsHTML());
+            }
+        };
+
+        // Video source not loaded yet, then load it
+        if (video.readyState !== 4) {
+            video.load();
+        }
+
+        // Enter full screen mode 
+        if (!video.webkitDisplayingFullscreen) {
+            video.webkitRequestFullscreen();
+        }
+
+        video.play();
+    }
+
+    $(document).ready(
+
+        // Play video when mouse 1 clicked
+        $('.video').on('click', function (event) { 
+            onVideoClicked(event);
+        }),
+
+        // Play video when enter pressed
+        $('.video').keypress(function (event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            console.log(keycode);
+            if (keycode == '13') {
+                onVideoClicked(event);
+            }
+        }),
+
+        // Exist full screen mode, pause the video
+        $('.video').on('webkitfullscreenchange', function (event) {
+            var video = document.getElementById(event.target.id);
+            if (!video.webkitDisplayingFullscreen) {
+               video.pause();
+            }
+        })
+    )
+</script>
 }

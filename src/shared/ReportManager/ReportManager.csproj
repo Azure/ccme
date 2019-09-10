@@ -54,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,11 +64,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportGenerators\HtmlReportGenerator.cs" />
     <Compile Include="ReportGenerators\PdfReportMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PdfReportMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="ReportGenerators\RegionInfo.cs" />
     <Compile Include="ReportManager.cs" />
     <Compile Include="ReportGenerators\IReportGenerator.cs" />
     <Compile Include="ReportGenerators\PdfReportGenerator.cs" />

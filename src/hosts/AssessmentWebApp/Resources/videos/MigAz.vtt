@@ -1,0 +1,25 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+Azure Cosmos DB could be migrated by the DocumentDB Data Migration Tool
+
+00:00:05.000 --> 00:00:09.000
+The destination Azure Cosmos database and collection must be created manually
+
+00:00:09.000 --> 00:00:12.000
+First we need to select the source as 'DocumentDB'
+
+00:00:12.000 --> 00:00:27.000
+Then we feed the connection string and collection name. Keep query empty for migrate all the data
+
+00:00:27.000 --> 00:00:38.000
+For the target, we feed the connection string and collection name too
+
+00:00:38.000 --> 00:00:41.000
+Skip advanced configuration. Check the import settings in the Summary page, then click 'Import'
+
+00:00:41.000 --> 00:01:23.000
+The Cosmos DB collection will be migrated to destination database
+
+00:01:23.000 --> 00:01:23.000
+(end)

@@ -18,6 +18,10 @@ namespace Microsoft.Azure.CCME.Assessment
             { "chinaeast2", "China East 2" }
         };
 
+        public const string DefaultTargetRegionName = "the target region";
+
+        public const string messageRegionNamePlaceHolder = "targetRegion";
+
         public const string TokenKey = "ARMAccessToken";
     }
 }

@@ -1,0 +1,46 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:34.000
+Azure Virtual Machines could be migrated by Azure Site Recovery. First, let's build the ASR vault in target region
+
+00:00:34.000 --> 00:01:13.000
+Cross-region migration will be treated as physical machine migration. Select On-promises to Azure, no hypervisor for step prepare infrastructure
+
+00:01:13.000 --> 00:03:37.000
+And we need to create a virtual machine as the configuration server, in the same virtual network of source virtual machines
+
+00:03:37.000 --> 00:03:42.000
+Download the configuration installer and credentials for later use
+
+00:03:42.000 --> 00:04:13.000
+Setup static public IP for configuration server to ensure it could be reached by the ASR
+
+00:04:13.000 --> 00:06:06.000
+Let's innstall the configuration server
+
+00:06:06.000 --> 00:06:34.000
+Add manage account to configuration server. The account should be admin of source virtual machines
+
+00:06:34.000 --> 00:07:18.000
+Register the configuration server to ASR then setup the replication policy
+
+00:07:18.000 --> 00:07:32.000
+Remote connect to the source virtual machine. Apply registry to enable connection from configuration server
+
+00:07:32.000 --> 00:08:50.000
+Add source virtual machine to ASR as physical machine, then enable he replication
+
+00:08:50.000 --> 00:09:26.000
+Once the replication was completed, we could verify it by test failover, or directly start the migration with "failover"
+
+00:09:26.000 --> 00:10:17.000
+The migrated virtual machine has no public IP by default. Let's assign a public IP manually
+
+00:10:17.000 --> 00:10:48.000
+Now the virtual machine is running in destination region. Let's check it via remote connection
+
+00:10:48.000 --> 00:11:06.000
+After the test failover completed, we could clean up the test virtual machine to save cost
+
+00:11:06.000 --> 00:11:06.000
+(end)

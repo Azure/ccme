@@ -118,11 +118,10 @@ td {
 
 .table100 {
     position: relative;
-    padding-top: 60px;
 }
 
 .table100-head {
-    position: absolute;
+    position: relative;
     width: 100%;
     top: 0;
     left: 0;
@@ -147,7 +146,7 @@ td {
 
 .table100.ver1 td {
     font-size: 15px;
-    color: #808080;
+    color: #545454;
     line-height: 1.4;
 }
 
@@ -157,7 +156,7 @@ td {
 
 /*---------------------------------------------*/
 
-.table100.ver1 {
+/*.table100.ver1 {
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.15);
@@ -176,8 +175,8 @@ td {
         }
 
         .table100.ver1 .ps__rail-y .ps__thumb-y::before {
-            background-color: #cccccc;
-        }
+            background-color: #428bca;
+        }*/
 
 /*//////////////////////////////////////////////////////////////////
 [ content ]*/
@@ -206,9 +205,11 @@ btn-input-blue:focus {
     color: #ffffff;
     width: 125px;
     line-height: 40px;
-    background-color: #428bca;
+    background-color: #29598A;
     border-color: #357ebd;
     border-radius: 5px;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
     .btn-blue:hover {
@@ -228,6 +229,11 @@ btn-input-blue:focus {
     margin: 0;
     padding: 0;
     position: relative;
+}
+
+.focusDiff:focus {
+    border: 2px dashed #fff !important;
+    border-color: #fff !important;
 }
 
 .navbar-nav > li {
@@ -360,7 +366,7 @@ btn-input-blue:focus {
 
     .nav-l:hover, .nav-l:focus,
     .nav-l.active {
-        background: #009cff;
+        background: #006099;
         color: #ffffff;
     }
 
@@ -373,6 +379,10 @@ btn-input-blue:focus {
             background: #eee;
             color: #535353;
         }
+a.navbar-brand {
+    position: relative;
+    z-index: 1;
+}
 
 .content {
     position: relative;
@@ -426,6 +436,7 @@ btn-input-blue:focus {
     height: 20px;
     margin-right: 20px;
     float: right;
+    font-weight: bold;
 }
 
 .right-align {
@@ -433,6 +444,7 @@ btn-input-blue:focus {
 }
 
 .container-a {
+    margin-top: 50px !important
 }
 
 /*************Assessment with Subscription****************/
@@ -469,6 +481,7 @@ btn-input-blue:focus {
     background-size: 100% 133px;
     background-position: center;
     background-repeat: no-repeat;
+    cursor: pointer !important;
 }
 
     .video-small.video-virtual-machine {
@@ -693,6 +706,11 @@ footer p {
         outline: -webkit-focus-ring-color auto 5px;
     }
 
+#usageReportFile:focus + #usageReportFileLabel {
+    border: solid 1px dotted;
+    border-color: #000000;
+}
+
 .errorMessage {
     color: red;
 }
@@ -798,4 +816,113 @@ footer {
 @media screen and (min-width:1630px) {
     .welcome-wrap {
     }
+}
+
+
+:focus {
+    border: 2px dashed #000000 !important;
+}
+
+.focus-border {
+    border: 2px dashed #000000 !important;
+}
+
+
+.video-player {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/*table::-webkit-scrollbar {
+    color: grey
+}
+
+table::-webkit-scrollbar-thumb {
+    color:blue
+}*/
+
+table::-webkit-scrollbar-thumb:window-inactive {
+    /*Your styles here*/
+}
+
+@media (min-width: 768px) and (max-width: 1700px) {
+    .navbar-collapse.collapse {
+        display: none !important;
+    }
+
+        .navbar-collapse.collapse.in {
+            display: block !important;
+        }
+
+    .navbar-header .collapse, .navbar-toggle {
+        display: block !important;
+    }
+
+    .navbar-header {
+        float: none;
+    }
+}
+
+@media (max-width: 650px) {
+    .navbar-brand {
+        width: 300px;
+    }
+}
+
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 40vh;
+    overflow: auto;
+}
+
+/*.table-wrapper-scroll-y {
+    display: block;
+}
+
+table {
+    width: 100%;
+}
+
+thead, tbody, tr, td, th {
+    display: block;
+}
+
+    tr:after {
+        content: ' ';
+        display: block;
+        visibility: hidden;
+        clear: both;
+    }
+
+    thead th {
+        height: 60px;
+        text-align: left;
+    }
+
+tbody {
+    height: 40vh;
+    overflow-y: auto;
+}
+
+tbody td, thead th {
+    width: 19.2%;
+    float: left;
+}*/
+
+@media screen and (-ms-high-contrast: active) {
+    table {
+        border: solid;
+        border-color: green;
+    }
+    .btn-blue {
+        border:solid;
+    }
+}
+
+.skipToMainContent {
+    height: 20px;
+    margin-right: 20px;
+    float: left;
+    text-decoration: underline;
 }

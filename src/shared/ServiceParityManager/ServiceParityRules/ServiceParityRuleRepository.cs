@@ -83,6 +83,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ServiceParityRules
                     default:
                         throw new InvalidRuleSetUnknownEvaluatorTypeException(ruleSetID, rule.Name, rule.EvaluatorModel.Type);
                 }
+
+                if(rule.Pattern["targetRegion"]?.ToString() != null)
+                {
+                    throw new InvalidRuleSetUnqualifiedRuleExcepton(ruleSetID, rule.Name);
+                }
             }
 
             return rules;

@@ -2522,6 +2522,516 @@
               }
             },
             {
+              "id": "9f848803-41b2-4a6d-9501-bb0e0ab31d2e",
+              "name": "DW100c",
+              "status": "Visible",
+              "supportedMaxSizes": [
+                {
+                  "limit": 250,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 500,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 750,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 1,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 5,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 10,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 20,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 30,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 40,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 50,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 60,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 70,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 80,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 90,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 100,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 150,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 200,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 240,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                }
+              ],
+              "performanceLevel": {
+                "value": 4500,
+                "unit": "DTU"
+              },
+              "includedMaxSize": null
+            },
+            {
+              "id": "bd2edbf5-11a2-4a87-b371-4b78eb82280e",
+              "name": "DW200c",
+              "status": "Visible",
+              "supportedMaxSizes": [
+                {
+                  "limit": 250,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 500,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 750,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 1,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 5,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 10,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 20,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 30,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 40,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 50,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 60,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 70,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 80,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 90,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 100,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 150,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 200,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 240,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                }
+              ],
+              "performanceLevel": {
+                "value": 4500,
+                "unit": "DTU"
+              },
+              "includedMaxSize": null
+            },
+            {
+              "id": "f1e305d4-5a13-4fd1-9deb-033d86ad8ea3",
+              "name": "DW300c",
+              "status": "Visible",
+              "supportedMaxSizes": [
+                {
+                  "limit": 250,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 500,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 750,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 1,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 5,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 10,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 20,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 30,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 40,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 50,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 60,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 70,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 80,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 90,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 100,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 150,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 200,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 240,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                }
+              ],
+              "performanceLevel": {
+                "value": 4500,
+                "unit": "DTU"
+              },
+              "includedMaxSize": null
+            },
+            {
+              "id": "9e6d0543-d417-4aee-a7aa-b588e0aa9722",
+              "name": "DW400c",
+              "status": "Visible",
+              "supportedMaxSizes": [
+                {
+                  "limit": 250,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 500,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 750,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 1,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 5,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 10,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 20,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 30,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 40,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 50,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 60,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 70,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 80,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 90,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 100,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 150,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 200,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 240,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                }
+              ],
+              "performanceLevel": {
+                "value": 4500,
+                "unit": "DTU"
+              },
+              "includedMaxSize": null
+            },
+            {
+              "id": "16d01b30-3ecd-4b97-aeaf-a3d52f46fcbe",
+              "name": "DW500c",
+              "status": "Visible",
+              "supportedMaxSizes": [
+                {
+                  "limit": 250,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 500,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 750,
+                  "unit": "Gigabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 1,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 5,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 10,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 20,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 30,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 40,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 50,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 60,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 70,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 80,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 90,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 100,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 150,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 200,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                },
+                {
+                  "limit": 240,
+                  "unit": "Terabytes",
+                  "status": "Visible"
+                }
+              ],
+              "performanceLevel": {
+                "value": 4500,
+                "unit": "DTU"
+              },
+              "includedMaxSize": null
+            },
+            {
               "id": "b89b9c6a-4ec2-4eb8-99db-6d2807e6aabb",
               "name": "DW1000",
               "status": "Available",

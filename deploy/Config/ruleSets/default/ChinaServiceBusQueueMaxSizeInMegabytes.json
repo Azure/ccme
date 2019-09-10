@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "Service Bus Queue max size {maxSizeInMegabytes}MB is not supported in Azure China",
+  "whitelistNoHitMessage": "Service Bus Queue max size {maxSizeInMegabytes}MB is not supported in {targetRegion}",
   "whitelist": [
     { "maxSizeInMegabytes": 16384 },
     { "maxSizeInMegabytes": 32768 },

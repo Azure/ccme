@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "Analysis Service SKU {name} is not supported in Azure China",
+  "whitelistNoHitMessage": "Analysis Service SKU {name} is not supported in {targetRegion}",
   "whitelist": [
     {
       "name": "B1",

@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "HDInsight VM size {vmSize} is not supported in Azure China",
+  "whitelistNoHitMessage": "HDInsight VM size {vmSize} is not supported in {targetRegion}",
   "whitelist": [
     {
       "kind": "*",
@@ -133,6 +133,6 @@
         "roleName": "ZookeeperNode",
         "vmSize": [ "A6", "A7", "A9", "EXTRALARGE", "STANDARD_D12", "STANDARD_D13", "STANDARD_D14", "STANDARD_D3", "STANDARD_D4" ]
       }
-    },
+    }
   ]
 }

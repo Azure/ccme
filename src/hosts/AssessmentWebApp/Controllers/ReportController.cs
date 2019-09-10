@@ -102,7 +102,7 @@ namespace Microsoft.Azure.CCME.Assessment.Hosts.Views.Report
                 FormattableString.Invariant($"Got file stream with size {stream.Length} for report {reportId}"),
                 telemetryContext);
 
-            return this.File(stream, @"application/pdf", $"{reportId}.pdf");
+            return this.File(stream, @"application/html", $"{fileName}");
         }
 
         [HttpGet]

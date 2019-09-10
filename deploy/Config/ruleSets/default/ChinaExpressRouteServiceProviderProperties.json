@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "ExpressRoute service provider {serviceProviderName} ({bandwidthInMbps}Mbps@{peeringLocation}) is not supported in Azure China",
+  "whitelistNoHitMessage": "ExpressRoute service provider {serviceProviderName} ({bandwidthInMbps}Mbps@{peeringLocation}) is not supported in {targetRegion}",
   "whitelist": [
     {
       "serviceProviderName": "Shanghai Telecom Ethernet",

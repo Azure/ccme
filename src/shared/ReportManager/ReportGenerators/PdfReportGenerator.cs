@@ -269,6 +269,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 // Resource Details
                 decimal totalCost = 0;
                 decimal totalOriginalCost = 0;
+
                 foreach (var kvp in costEstimationResult.DetailsByResourceGroup)
                 {
                     if (!kvp.Value.Any(d => d.EstimatedCost.HasValue))
@@ -421,7 +422,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             shortSummaryRow.Cells[0].AddParagraph("Number of Resources Failed in Parity Rule Check/Number of All Resources");
 
             var detailPassFailed = serviceParityResult.Details.Where(d => !d.Value.Pass);
-            var resourceNotPassedCount = costEstimationResult.Details.Where(c => detailPassFailed.Any(d => d.Key == c.ResourceId)).Distinct().Count();
+            var resourceNotPassedCount = costEstimationResult.Details.Where(c => detailPassFailed.Any(d => d.Key == c.ResourceId)).GroupBy(g => g.ResourceId).Count();
+
             shortSummaryRow.Cells[1].AddParagraph(FormattableString.Invariant($"{resourceNotPassedCount}/{resourcesCount}"));
 
             shortSummaryRow = shortSummary.AddRow();
@@ -594,7 +596,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             public static readonly Font ContentFont = new Font
             {
-                Color = Color.FromCmyk(0, 0, 0, 70),
+                Color = new Color(121, 111, 144),
                 Size = 12,
                 Name = "Segoe UI"
             };
@@ -902,19 +904,6 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             }
         }
 
-        private class RegionInfo
-        {
-            public bool IsChinaRegion { get; set; }
-
-            public CultureInfo CurrencyCulture { get; set; }
-
-            public string CurrencySymbol { get; set; }
-
-            public string CurrencyUnit { get; set; }
-
-            public string TargetRegionName { get; set; }
-
-            public List<string> TargetResoureTypes { get; set; }
-        }
+        
     }
 }

@@ -1,13 +1,13 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "Cdn SKU {name} is not supported in Azure China",
+  "whitelistNoHitMessage": "Cdn SKU {name} is not supported in {targetRegion}",
   "whitelist": [
     {
-      "name": "Premium_ChinaCdn",
+      "name": "Premium_ChinaCdn"
     },
     {
-      "name": "Standard_ChinaCdn",
+      "name": "Standard_ChinaCdn"
     }
   ]
 }

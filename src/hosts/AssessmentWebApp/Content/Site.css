@@ -24,6 +24,7 @@ a {
     -webkit-transition: all 0.4s;
     -o-transition: all 0.4s;
     -moz-transition: all 0.4s;
+    color: #244b75;
 }
     a:link, a:hover,a:focus, a:active {
         text-decoration: none;

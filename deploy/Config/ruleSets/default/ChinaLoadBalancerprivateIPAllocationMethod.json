@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "Load balancer private IP allocation method {Key Vault SKU {name} is not supported in Azure China} is not supported in Azure China",
+  "whitelistNoHitMessage": "Load balancer private IP allocation method {Key Vault SKU {name} is not supported in Azure China} is not supported in {targetRegion}",
   "whitelist": [
     { "privateIPAllocationMethod": "Dynamic" },
     { "privateIPAllocationMethod": "Static" }

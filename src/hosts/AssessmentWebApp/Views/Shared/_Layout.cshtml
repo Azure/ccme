@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -15,98 +15,116 @@
 </head>
 
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("China Cloud Migration & Expansion (Preview)", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">                
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="img-home">@Html.ActionLink("Home", "Index", "Home")</li>
-                    @if (!Request.IsAuthenticated)
-                    {
-                        <li class="img-signin">@Html.ActionLink("Sign in", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, null)</li>
-                        <li class="img-feedback">@Html.ActionLink("Feedback", "Index", "Feedback")</li>
-                    }
-                    else
-                    {
-
-                        <li class="img-signin">@Html.ActionLink("Sign out", "SignOut", "Home")</li>
-                        <li class="img-feedback">@Html.ActionLink("Feedback", "Index", "Feedback")</li>
-                        <li class="img-user">
-                            <span class="about-me">
-                                @System.Security.Claims.ClaimsPrincipal.Current.FindFirst("name").Value
-                            </span>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
-        <div class="left-bar">
-            <div> @Html.ActionLink("Assessment with Subscription", "ListSubscription", "Assessment", new { area = "" }, new { @class = "nav-l show-load" })</div>
-            @if (ViewBag.CloudEnvironment != "AzureChinaCloud")
-            {
-                <div> @Html.ActionLink("Assessment with Usage Report", "Index", "AssessmentWithUsageReport", new { area = "" }, new { @class = "nav-l" }) </div>
-            }
-            <div> @Html.ActionLink("Migration Guidebook", "Index", "Migration", new { area = "" }, new { @class = "nav-l" }) </div>
-        </div>
-        <div class="content">
-            <div class="main-content">
-                @RenderBody()
+    <div id="Page">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a id="skipToMainContent" class="navbar-brand focusDiff" href="#welcome" autofocus>Skip to Main Content</a>
+                    @Html.ActionLink("China Cloud Migration & Expansion (Preview)", "Index", "Home", new { area = "" }, new { @class = "navbar-brand focusDiff" })
+                    <button type="button" class="navbar-toggle focusDiff" id="detect" data-toggle="collapse" data-target=".navbar-collapse" aria-label="ToggleNavBar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="img-home">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "focusDiff" })</li>
+                        @*<li class="img-home">@Html.ActionLink("Skip to Main Content", "Index", "Home", null, new { id = "welcome" })</li>*@
+                        @if (!Request.IsAuthenticated)
+                        {
+                            <li class="img-signin">@Html.ActionLink("Sign in", "SignIn", "Home", new { redirectUrl = Request.Url.PathAndQuery }, new { @class= "focusDiff" })</li>
+                            <li class="img-feedback">@Html.ActionLink("FAQ", "Index", "Feedback", new { @class = "focusDiff" })</li>
+                        }
+                        else
+                        {
+                            <li class="img-signin">@Html.ActionLink("Sign out", "SignOut", "Home", new { @class = "focusDiff" })</li>
+                            <li class="img-feedback">@Html.ActionLink("FAQ", "Index", "Feedback", new { @class = "focusDiff" })</li>
+                            <li class="img-user">
+                                <span class="about-me">
+                                    @System.Security.Claims.ClaimsPrincipal.Current.FindFirst("name").Value
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="loading">
-        <div class="loading-color">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    <script>
-        $(function () {
-            $(".show-load").on("click", function () {
-                $(".loading").show();
-            });
-            $(".btn-sign").on("click", function () {
-                $(".loading").show();
-            });
-
-            var url = window.location.pathname;
-            var activePage = url.substring(url.lastIndexOf('/') + 1);
-            $('.nav-l').each(function () {
-                var currentPage = this.href.substring(this.href.lastIndexOf('/') + 1);
-
-                if (activePage == currentPage) {
-                    $(this).addClass('active');
+        <div class="container body-content">
+            <div class="left-bar">
+                <div> @Html.ActionLink("Assessment with Subscription", "ListSubscription", "Assessment", new { area = "" }, new { @class = "nav-l show-load" })</div>
+                @if (ViewBag.CloudEnvironment != "AzureChinaCloud")
+                {
+                    <div> @Html.ActionLink("Assessment with Usage Report", "Index", "AssessmentWithUsageReport", new { area = "" }, new { @class = "nav-l" }) </div>
                 }
+                <div> @Html.ActionLink("Migration Guidebook", "Index", "Migration", new { area = "" }, new { @class = "nav-l" }) </div>
+            </div>
+            <div class="content">
+                <div class="main-content">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <div class="loading">
+            <div class="loading-color">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        <script>
+            $(function () {
+                $("#skipToMainContent").focus();
+                $(".show-load").on("click", function () {
+                    $(".loading").show();
+                });
+                $(".btn-sign").on("click", function () {
+                    $(".loading").show();
+                });
+
+                var url = window.location.pathname;
+                var activePage = url.substring(url.lastIndexOf('/') + 1);
+                $('.nav-l').each(function () {
+                    var currentPage = this.href.substring(this.href.lastIndexOf('/') + 1);
+
+                    if (activePage == currentPage) {
+                        $(this).addClass('active');
+                    }
+                });
+
+            });
+        </script>
+
+        <script src="~/Scripts/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript">
+            $('.js-pscroll').each(function () {
+                var ps = new PerfectScrollbar(this);
+                $(window).on('resize', function () {
+                    ps.update();
+                })
             });
 
-        });
-    </script>
-
-    <script src="~/Scripts/perfect-scrollbar.min.js"></script>
-    <script type="text/javascript">
-        $('.js-pscroll').each(function () {
-            var ps = new PerfectScrollbar(this);
-
-            $(window).on('resize', function () {
-                ps.update();
-            })
-        });
-    </script>
-    @RenderSection("scripts", required: false)
+            $('#Page').each(
+                function () {
+                    $(this).on('focus', function () {
+                        $(this).addClass("focus-border");
+                    })
+                }
+            );
+            $('#Page').each(
+                function () {
+                    $(this).on('blur', function () {
+                        $(this).removeClass("focus-border");
+                    })
+                }
+            );
+        </script>
+        @RenderSection("scripts", required: false)
+    </div>
 </body>
 
 </html>

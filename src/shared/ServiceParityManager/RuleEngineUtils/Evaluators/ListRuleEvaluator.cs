@@ -62,7 +62,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
             }
         }
 
-        public RuleEngineOutputModel Evaluate(Match match)
+        public RuleEngineOutputModel Evaluate(Match match, IReadOnlyDictionary<string, string> additionalReplacements)
         {
             // Search for the given values in the blacklist
             var brokenItem = this.list.Blacklist?.FirstOrDefault(item => match.Equals(item.Values, this.ignoreCase));
@@ -72,8 +72,8 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
                 {
                     Pass = false,
                     Message =
-                        PopulateMessage(brokenItem.HitResource, brokenItem.HitMessage, match) ??
-                        PopulateMessage(this.list.BlacklistDefaultHitResource, this.list.BlacklistDefaultHitMessage, match),
+                        PopulateMessage(brokenItem.HitResource, brokenItem.HitMessage, match, additionalReplacements) ??
+                        PopulateMessage(this.list.BlacklistDefaultHitResource, this.list.BlacklistDefaultHitMessage, match, additionalReplacements),
                     Path = match.Groups.First().Value.Path
                 };
             }
@@ -84,7 +84,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
                 return new RuleEngineOutputModel
                 {
                     Pass = false,
-                    Message = PopulateMessage(this.list.WhitelistNoHitResource, this.list.WhitelistNoHitMessage, match),
+                    Message = PopulateMessage(this.list.WhitelistNoHitResource, this.list.WhitelistNoHitMessage, match, additionalReplacements),
                     Path = match.Groups.First().Value.Path
                 };
             }
@@ -92,7 +92,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
             return new RuleEngineOutputModel { Pass = true };
         }
 
-        private static string PopulateMessage(string resource, string message, Match match)
+        private static string PopulateMessage(string resource, string message, Match match, IReadOnlyDictionary<string, string> additionalReplacements)
         {
             // ToDo: load localized message from resource
             if (string.IsNullOrEmpty(message))
@@ -100,9 +100,15 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils.Evaluators
                 return null;
             }
 
+            var replacements = match.Groups.Values.ToDictionary(g => g.Key, g => g.Value.ToString());
+            foreach (var pair in additionalReplacements)
+            {
+                replacements.Add(pair.Key, pair.Value);
+            }
+
             return PlaceholderHelper.ReplacePlaceholders(
                 message,
-                match.Groups.Values.ToDictionary(g => g.Key, g => g.Value.ToString()));
+                replacements);
         }
     }
 }

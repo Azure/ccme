@@ -1,7 +1,7 @@
 {
   "contentVersion": "1.0.0.0",
   "$schema": "https://aka.ms/CCME/schemas/2018-03-01/assessmentRuleListEvaluator.json",
-  "whitelistNoHitMessage": "Redis Cache SKU {name} {family}{capacity} is not supported in Azure China",
+  "whitelistNoHitMessage": "Redis Cache SKU {name} {family}{capacity} is not supported in {targetRegion}",
   "whitelist": [
     {
       "name": "Premium",

@@ -5,22 +5,22 @@
 }
 <div class="p-60 assessment-report">
     <div>
-        <h2 class="title-one">Assessment with Subscription</h2>
+        <h1 id="AssessmentWithSubscription" class="title-one">Assessment with Subscription</h1>
     </div>
 
     @if (Request.IsAuthenticated)
     {
     <div class="container-a">
-        @using (@Html.BeginForm("SwitchTenant", "Assessment"))
+        @using (@Html.BeginForm("SwitchTenant", "Assessment", FormMethod.Post, new { aria_label = "switch tenant" }))
     {
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-md-3"> @Html.LabelFor(model => model.TenantId, "Tenant", new { @class = "label-title" })</div>
-            <div class="col-md-6">@Html.DropDownListFor(model => model.TenantId, Model.TenantItems, "-- Select Tenants --", new { id = "lstTenants" })</div>
+            <div class="col-md-6">@Html.DropDownListFor(model => model.TenantId, Model.TenantItems, "-- Select Tenants --", new { id = "lstTenants", aria_label = "tenants" })</div>
             <div class="col-md-3  col-xs-12 right-align"><button id="btnSwitchTenant" type="submit" class="btn-blue">Switch Tenant</button></div>
         </div>
     }
-        @using (@Html.BeginForm("CreateNewTask", "Assessment"))
+        @using (@Html.BeginForm("CreateNewTask", "Assessment", FormMethod.Post, new { aria_label = "create new task" }))
     {
         @Html.HiddenFor(model => model.TenantId, new { id = "hiddenTenantId" })
         @Html.AntiForgeryToken()
@@ -32,7 +32,7 @@
                 </span>
             </div>
             <div class="col-md-9">
-                @Html.DropDownListFor(model => model.SelectedSubscriptionId, Model.SubscriptionListItems, "-- Select Subscription --", new { id = "lstSubscriptions" })
+                @Html.DropDownListFor(model => model.SelectedSubscriptionId, Model.SubscriptionListItems, "-- Select Subscription --", new { id = "lstSubscriptions", aria_label = "subscriptions" })
                 @Html.Hidden("SelectedSubscriptionName", "", new { id = "hiddenSubscriptionName" })
             </div>
 
@@ -43,11 +43,11 @@
                     @Html.LabelFor(model => model.SelectedTargetRegion, "Target Regions")
                 </span>
             </div>
-            <div class="col-md-9"> @Html.DropDownListFor(model => model.SelectedTargetRegion, Model.TargetRegionListItems, "-- Select Target Region --", new { id = "lstTargetRegions" })</div>
+            <div class="col-md-9"> @Html.DropDownListFor(model => model.SelectedTargetRegion, Model.TargetRegionListItems, "-- Select Target Region --", new { id = "lstTargetRegions", aria_label = "regions" })</div>
 
         </div>
         <div class="row">
-            <div class="col-md-9 col-md-offset-3 right-align"><button id="btnAssessment" type="submit" class=" btn-blue">Run</button></div>
+            <div class="col-md-9 col-md-offset-3 right-align"><button id="btnAssessment" type="submit" class="btn-blue">Run</button></div>
         </div>
 
     }
@@ -63,14 +63,16 @@
     }
     else
     {
-        <h4>Click @Html.ActionLink("Here", "SignIn", "Home", new { redirectUrl = "/Assessment/ListSubscription" }, new { @class = "bold-link" }) to sign in</h4>
+        <h4>Please @Html.ActionLink("sign in", "SignIn", "Home", new { redirectUrl = "/Assessment/ListSubscription" }, new { @id = "signIn", @class = "bold-link" })</h4>
     }
 </div>
 
 @section scripts
 {
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function () {
+
+            $('#skipToMainContent').attr('href', '#AssessmentWithSubscription');
 
             $('#btnSwitchTenant').on('click', function (e) {
                 var currentTenantId = $('#hiddenTenantId').val();
@@ -98,7 +100,9 @@
 
             $("#lstSubscriptions").change(function () {
                 $("#hiddenSubscriptionName").val($(this).find("option:selected").text());
-            })
+            });
+
+            var isSignedIn = @Request.IsAuthenticated.ToString().ToLowerInvariant();
         });
-    </script>
+</script>
 }

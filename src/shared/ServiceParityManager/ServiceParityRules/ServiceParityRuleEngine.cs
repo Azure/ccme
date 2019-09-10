@@ -28,13 +28,18 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ServiceParityRules
             var ruleEngine = new RuleEngine(rules);
 
             var details = new Dictionary<string, ServiceParityResourceResult>();
+
+            Constants.TargetRegions.TryGetValue(targetRegion, out var targetRegionName);
+            targetRegionName = string.IsNullOrWhiteSpace(targetRegionName) ? Constants.DefaultTargetRegionName : targetRegionName;
+
             foreach (var resource in resources.Where(r => r.Details != null))
             {
                 try
                 {
                     var originalLocation = resource.Details["location"];
                     resource.Details["location"] = targetRegion;
-                    var outputs = ruleEngine.Analyze(resource.Details);
+
+                    var outputs = ruleEngine.Analyze(resource.Details, targetRegionName);
                     resource.Details["location"] = originalLocation;
 
                     details.Add(

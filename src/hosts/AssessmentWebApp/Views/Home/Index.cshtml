@@ -15,15 +15,16 @@
         null,
         new
         {
-            @class = "privacystatement"
+            @class = "privacystatement",
+            @style = "text-decoration:underline;"
         })
     <div class="welcome-wrap">
-        <h2>China Cloud Migration & Expansion</h2>
+        <h1>China Cloud Migration & Expansion</h1>
         <div class="welcome-cloud">
 
         </div>
 
-        <h3>Hello Welcome!</h3>
+        <h3 id="welcome">Hello Welcome!</h3>
         @if (ViewBag.CloudEnvironment != "AzureChinaCloud")
         {
             <p>Migration & Expansion provide customers with service and guide to reduce the friction in Cloud migration and expansion between Azure China and Global Azure.</p>
@@ -55,7 +56,15 @@
 
 @if (!string.IsNullOrWhiteSpace(Request.QueryString["errormessage"]))
 {
-    <div style="background-color:red;color:white;font-weight: bold;">
-        Error: @Request.QueryString["errormessage"]
+    <div aria-live=assertive style="background-color:red;color:white;font-weight: bold;">
+        <script>
+            alert("errormessage");
+        </script>
     </div>
 }
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#skipToMainContent').attr('href', '#welcome');
+    });
+</script>

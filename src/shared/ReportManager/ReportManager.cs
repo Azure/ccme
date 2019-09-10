@@ -25,8 +25,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers
             ServiceParityResult serviceParityResult,
             CostEstimationResult costEstimationResult)
         {
-            IReportGenerator reportGenerator = new PdfReportGenerator();
+            //IReportGenerator reportGenerator = new PdfReportGenerator();
 
+            IReportGenerator reportGenerator = new HtmlReportGenerator();
             AssessmentReport report = await reportGenerator.ProcessAsync(
                 this.context,
                 serviceParityResult,

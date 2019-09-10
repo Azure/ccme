@@ -12,6 +12,6 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils
 {
     internal interface IRuleEngine
     {
-        IEnumerable<RuleEngineOutputModel> Analyze(JToken input);
+        IEnumerable<RuleEngineOutputModel> Analyze(JToken input, string targetRegionName);
     }
 }

@@ -1,0 +1,40 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+App Service could be migrated by the built-in feature backup/restore
+
+00:00:05.000 --> 00:00:12.000
+First, we need to setup backup storage for the source App Service
+
+00:00:12.000 --> 00:00:35.000
+The backup storage could be any blob storage in the source region
+
+00:00:35.000 --> 00:00:46.000
+For migration, there is no need to setup the backup schedule. Let's just trigger the backup manually
+
+00:00:46.000 --> 00:00:50.000
+Usually the backup job will be completed in minutes
+
+00:00:50.000 --> 00:00:57.000
+Before restore the backed App Service, we need to create an empty App Service in target region
+
+00:00:57.000 --> 00:01:20.000
+Then setup the backup storage with any blob storage
+
+00:01:20.000 --> 00:01:25.000
+Let's copy all the backup files from the source container to destination region. Then click "Restore"
+
+00:01:25.000 --> 00:01:40.000
+Select the restore resource as "Storage" since the backup were not generated the current App Service itself
+
+00:01:40.000 --> 00:01:48.000
+Select the zip file amoung backup files
+
+00:01:48.000 --> 00:01:53.000
+Select "Overwrite" to restore to the current App Service. We could also modify connection strings to point to the resource in the destination region
+
+00:01:53.000 --> 00:02:14.000
+Click "OK" then restore will be done in minutes. Let's check the migrated App Service
+
+00:02:14.000 --> 00:02:14.000
+(end)

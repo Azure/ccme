@@ -22,22 +22,27 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.RuleEngineUtils
             this.rules = rules;
         }
 
-        public IEnumerable<RuleEngineOutputModel> Analyze(JToken input)
+        public IEnumerable<RuleEngineOutputModel> Analyze(JToken input, string targetRegionName)
         {
             return this.rules
-                .Select(rule => Analyze(input, rule))
+                .Select(rule => Analyze(input, rule, targetRegionName))
                 .SelectMany(m => m)
                 .ToList();
         }
 
-        private static IEnumerable<RuleEngineOutputModel> Analyze(JToken input, RuleModel rule)
+        private static IEnumerable<RuleEngineOutputModel> Analyze(JToken input, RuleModel rule, string targetRegionName)
         {
             var jsonMatch = new JsonMatchEngine(rule.Pattern, rule.IgnoreCase);
             var collection = jsonMatch.Matches(input) ?? new Match[] { };
 
+            var additionalReplacements = new Dictionary<string, string>
+            {
+                { Constants.messageRegionNamePlaceHolder, targetRegionName }
+            };
+
             return collection.Select(match =>
             {
-                var output = rule.Evaluator.Evaluate(match);
+                var output = rule.Evaluator.Evaluate(match, additionalReplacements);
                 output.RuleName = rule.Name;
                 output.RuleSetID = rule.RuleSetID;
                 output.Severity = rule.Severity;

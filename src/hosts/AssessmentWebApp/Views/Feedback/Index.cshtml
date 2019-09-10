@@ -1,12 +1,46 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "FAQ";
 }
-<div class="p-l-t-60">
+<div class="p-60 playbook">
     <div>
-        <h2>Feedback</h2>
+        <h1>FAQ</h1>
     </div>
+    <br />
+
     <p>
-        For any questions, please send us an email to <a herf="#" class="txt-line">mrmall@microsoft.com</a> .
+        <b>Q:</b> I can see my subscription name in the subscription drop down list. However, when I run the assessment, I get the error message that ‘Failed to retrieve Azure resource data due to insufficient permission. Please check your Azure RBAC role and ensure you have any of the role below for the whole subscription: Reader, Contributor and Owner.’
+    </p>
+    <p>
+        <b>A:</b> The error message indicate that you might not have the right role to run the assessment. User must be with Azure RBAC role “Reader”, “Contributor” or “Owner” of the source subscription to conduct the assessment. To find out what role a user have, check out <a href="https://docs.azure.cn/en-us/role-based-access-control/rbac-and-directory-admin-roles#azure-rbac-roles">Azure RBAC Roles</a>.
+    </p>
+    <br />
+
+    <p>
+        <b>Q:</b> Where can I get the usage report?
+    </p>
+    <p>
+        <b>A:</b> Please refer to <a href="https://docs.azure.cn/en-us/billing/billing-get-usage-information">download usage from Account Center</a> to download usage report V2. Then users could upload to China Cloud Migration & Expansion service for assessment.
+    </p>
+    <br />
+
+    <p>
+        <b>Q:</b> What version of the usage report the service supports?
+    </p>
+    <p>
+        <b>A:</b> The service supports usage report V2 only.
+    </p>
+    <br />
+
+    <p>
+        <b>Q:</b> I tried to sign-in with my Microsoft account (@("@outlook.com"), @(@"live.com"), @(@"hotmail.com")) but failed with error message “AADSTS50020: User account ‘account@outlook.com’ from identity provider ‘live.com’ does not exist in tenant ‘Microsoft’ and cannot access the application…”.
+    </p>
+    <p>
+        <b>A:</b> China Cloud Migration & Expansion requires an Azure Active Directory account in format like account@name.onmicrosoft.com to access subscription data. Microsoft Account in form like account@outlook.com, account@hotmail.com, account@live.com would not work. Please work with your tenant admin to add user account in Azure AD account via Azure portal, and then sign in with that account.
+    </p>
+    <br />
+
+    <p>
+        For any questions, please send us an email to <a herf="#" class="txt-line">mrmall@microsoft.com</a>.
     </p>
 </div>
