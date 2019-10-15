@@ -10,8 +10,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Azure.CCME.Assessment.Environments;
@@ -20,7 +18,6 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
-using Newtonsoft.Json;
 using PdfSharp.Drawing;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
@@ -527,26 +524,22 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
         private static async Task<RegionInfo> GetRegionInfoAsync(string targetRegion)
         {
-            string resourceTypeUrl;
             string currencyUnit;
             string targetRegionName;
             CultureInfo currencyCulture;
-            var isChinaRegion = false;
+
             switch (targetRegion.ToLowerInvariant())
             {
                 case "chinanorth":
                 case "chinaeast":
                 case "chinanorth2":
                 case "chinaeast2":
-                    resourceTypeUrl = @"https://globalconnectioncenter.blob.core.windows.net/resourcetypelist/resourceTypeInChina.json";
                     currencyUnit = "RMB(CNY)";
                     targetRegionName = "Azure in China (21 Vianet)";
                     currencyCulture = CultureInfo.GetCultureInfo("zh-cn");
-                    isChinaRegion = true;
                     break;
                 case "germanycentral":
                 case "germanynortheast":
-                    resourceTypeUrl = @"https://globalconnectioncenter.blob.core.windows.net/resourcetypelist/resourceTypeInGermany.json";
                     currencyUnit = "EUR";
                     targetRegionName = "Microsoft Azure in Germany";
                     currencyCulture = CultureInfo.GetCultureInfo("de-de");
@@ -557,23 +550,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             var currencySymbol = currencyCulture.NumberFormat.CurrencySymbol;
 
-            List<string> targetResoureTypes;
-            using (var wc = new WebClient { Encoding = Encoding.UTF8 })
+            return await Task.FromResult(new RegionInfo
             {
-                var resourceTypeContent =
-                    await wc.DownloadStringTaskAsync(resourceTypeUrl);
-                targetResoureTypes = JsonConvert.DeserializeObject<List<string>>(resourceTypeContent);
-            }
-
-            return new RegionInfo
-            {
-                IsChinaRegion = isChinaRegion,
                 CurrencyCulture = currencyCulture,
                 CurrencySymbol = currencySymbol,
                 CurrencyUnit = currencyUnit,
-                TargetRegionName = targetRegionName,
-                TargetResoureTypes = targetResoureTypes
-            };
+                TargetRegionName = targetRegionName
+            });
         }
 
         private class DocumentInfo
@@ -903,7 +886,5 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 return string.Join("\n", firstHalf, secondHalf);
             }
         }
-
-        
     }
 }

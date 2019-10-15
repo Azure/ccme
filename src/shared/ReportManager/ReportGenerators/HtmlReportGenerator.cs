@@ -5,18 +5,15 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI;
 using Microsoft.Azure.CCME.Assessment.Environments;
 using Microsoft.Azure.CCME.Assessment.Models;
-using Newtonsoft.Json;
 
 namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 {
@@ -46,9 +43,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
             var regionInfo = await GetRegionInfoAsync(targetRegion);
 
-            var htmlReport = MakePage(targetRegion, 
-                regionInfo, 
-                parityResult, 
+            var htmlReport = MakePage(targetRegion,
+                regionInfo,
+                parityResult,
                 costEstimationResult);
 
             var filename = "CCMEAssessmentReport" + DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + ".html";
@@ -62,11 +59,9 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
         private static async Task<RegionInfo> GetRegionInfoAsync(string targetRegion)
         {
-            string resourceTypeUrl;
             string currencyUnit;
             string targetRegionName;
             CultureInfo currencyCulture;
-            var isChinaRegion = false;
             string currencySymbol = string.Empty;
 
             switch (targetRegion.ToLowerInvariant())
@@ -75,16 +70,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                 case "chinaeast":
                 case "chinanorth2":
                 case "chinaeast2":
-                    resourceTypeUrl = @"https://globalconnectioncenter.blob.core.windows.net/resourcetypelist/resourceTypeInChina.json";
                     currencyUnit = "RMB(CNY)";
                     targetRegionName = "Azure in China (21 Vianet)";
                     currencyCulture = CultureInfo.GetCultureInfo("zh-cn");
                     currencySymbol = "&yen;";
-                    isChinaRegion = true;
                     break;
                 case "germanycentral":
                 case "germanynortheast":
-                    resourceTypeUrl = @"https://globalconnectioncenter.blob.core.windows.net/resourcetypelist/resourceTypeInGermany.json";
                     currencyUnit = "EUR";
                     targetRegionName = "Microsoft Azure in Germany";
                     currencyCulture = CultureInfo.GetCultureInfo("de-de");
@@ -94,23 +86,13 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                     throw new ArgumentOutOfRangeException(nameof(targetRegion), targetRegion, null);
             }
 
-            List<string> targetResoureTypes;
-            using (var wc = new WebClient { Encoding = Encoding.UTF8 })
+            return await Task.FromResult(new RegionInfo
             {
-                var resourceTypeContent =
-                    await wc.DownloadStringTaskAsync(resourceTypeUrl);
-                targetResoureTypes = JsonConvert.DeserializeObject<List<string>>(resourceTypeContent);
-            }
-
-            return new RegionInfo
-            {
-                IsChinaRegion = isChinaRegion,
                 CurrencyCulture = currencyCulture,
                 CurrencySymbol = currencySymbol,
                 CurrencyUnit = currencyUnit,
-                TargetRegionName = targetRegionName,
-                TargetResoureTypes = targetResoureTypes
-            };
+                TargetRegionName = targetRegionName
+            });
         }
 
         public static string MakePage(string targetRegion,
@@ -158,7 +140,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             #endregion Head
         }
 
-        private static void MakeBody(HtmlTextWriter w, 
+        private static void MakeBody(HtmlTextWriter w,
             string targetRegion,
             RegionInfo regionInfo,
             ServiceParityResult parityResult,
@@ -322,7 +304,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
             CostEstimationResult costEstimationResult)
         {
             var detailsAll = serviceParityResult.Details.Where(d => d.Value.Pass == false).ToDictionary(i => i.Key, i => i.Value);
-            
+
             // Group up parities by resource group
             foreach (var resourceGroup in costEstimationResult.DetailsByResourceGroup)
             {
@@ -425,10 +407,7 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
                         #endregion Table
                     }
                 }
-
-
             }
-                
         }
 
         private static void MakeCostEstimation(HtmlTextWriter w,
@@ -614,13 +593,11 @@ namespace Microsoft.Azure.CCME.Assessment.Managers.ReportGenerators
 
                 w.RenderEndTag();
                 #endregion Table
-
-               
             }
         }
 
-        private static void MakeCostEstimationResouceGroupTableRow(HtmlTextWriter w, 
-            CostEstimationDetail detail, 
+        private static void MakeCostEstimationResouceGroupTableRow(HtmlTextWriter w,
+            CostEstimationDetail detail,
             RegionInfo regionInfo,
             bool isError = false)
         {
